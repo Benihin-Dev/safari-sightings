@@ -1330,6 +1330,8 @@
    .sw{position:sticky;top:var(--hh,0px);z-index:29;background:#F4F6F4;margin:0 -12px;padding:10px 12px 0}
    .sw .icn{left:27px;top:calc(50% + 5px)}
    .ch{position:sticky;top:calc(var(--hh,0px) + var(--sh,0px));z-index:28;background:#F4F6F4;margin:0 -12px;padding:6px 14px 8px;box-shadow:0 6px 8px -7px rgba(0,0,0,.25)}
+#ls .cat{position:sticky;top:calc(var(--hh,0px) + var(--sh,0px) + var(--chh,0px) + 10px);z-index:27;box-shadow:0 6px 0 #F4F6F4}
+#ls .cat::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px;background:#F4F6F4}
 </style>
 </head>
 <body>
@@ -2868,11 +2870,10 @@ async function flush() {
   $('ch').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cat = b.getAttribute('data-c'); chips(); draw(); const ls = $('ls'); [...ls.querySelectorAll('.cd')].forEach((el, i) => { el.style.animationDelay = Math.min(i, 12) * 40 + 'ms'; }); ls.classList.add('stag'); setTimeout(() => ls.classList.remove('stag'), 900); });
   $('q').addEventListener('input', e => { q = e.target.value.trim(); draw(); });
 (function () {
-  const root = document.querySelector('#sight'), hd = root.querySelector('.hd'), sw = root.querySelector('.sw');
-  function set() { root.style.setProperty('--hh', hd.offsetHeight + 'px'); root.style.setProperty('--sh', sw.offsetHeight + 'px'); }
-  new ResizeObserver(set).observe(hd); new ResizeObserver(set).observe(sw); set();
+  const root = document.querySelector('#sight'), hd = root.querySelector('.hd'), sw = root.querySelector('.sw'), ch = root.querySelector('.ch');
+  function set() { root.style.setProperty('--hh', hd.offsetHeight + 'px'); root.style.setProperty('--sh', sw.offsetHeight + 'px'); root.style.setProperty('--chh', ch.offsetHeight + 'px'); }
+  [hd, sw, ch].forEach(el => new ResizeObserver(set).observe(el)); set();
 })();
-
   $('sgo').onclick = () => {
     const n = total();
     if (!n) { $('gm').textContent = 'Tick at least one sighting first'; return; }
