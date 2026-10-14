@@ -1508,20 +1508,9 @@ const CONFIG = {
   API: 'https://script.google.com/macros/s/AKfycbxNlB7x6ujqT5gyr_Hyi0YPgObhpyNQkOOw1tvxRsnqVMG_tH4A_q3O7pGJ5Dle49UP/exec',   /* Google Apps Script web app link */
   FEEDBACK: 'https://g.page/r/CTknMOMTPqYaEBM/review',
   FEATURE_TITLE: 'Big Five progress',
-  FEATURED: ['Elephant', 'Leopard', 'Sloth bear', 'Sambar deer', 'Mugger crocodile'],
+  FEATURED: ['Leopard', 'Sloth bear', 'Elephant', 'Wild Water Buffalo', 'Mugger crocodile'],
   GUIDE: { name: 'S. C. Jastan Ric', role: 'Environmental Steward', phone: '+94 754540123', email: 'jastanric@outlook.com', site: 'jastanric.vercel.app' }
 };
-/* Sample species used only while the web app link above is still the placeholder (test mode). */
-const SAMPLE = [
-  { ID: 1, Category: 'Mammals', 'Common name': 'Sri Lankan leopard', 'Scientific name': 'Panthera pardus kotiya', 'IUCN status': 'Endangered', 'Did you know': 'The Sri Lankan leopard is the top predator on the island.', 'Male caption': 'Adult male, heavier build', 'Female caption': 'Adult female, slimmer build' },
-  { ID: 2, Category: 'Mammals', 'Common name': 'Asian elephant', 'Scientific name': 'Elephas maximus', 'IUCN status': 'Endangered', 'Did you know': 'Elephants use low-frequency sound to talk across long distances.', 'Male caption': 'Bull, tusks may be present', 'Female caption': 'Cow, usually tuskless' },
-  { ID: 3, Category: 'Mammals', 'Common name': 'Sloth bear', 'Scientific name': 'Melursus ursinus', 'IUCN status': 'Vulnerable', 'Did you know': 'Sloth bears can close their nostrils while feeding on termites.', 'Male caption': 'Adult male', 'Female caption': 'Adult female' },
-  { ID: 4, Category: 'Birds', 'Common name': 'Indian peafowl', 'Scientific name': 'Pavo cristatus', 'IUCN status': 'Least concern', 'Did you know': 'Only the male carries the long, colourful train.', 'Male caption': 'Peacock with train', 'Female caption': 'Peahen, duller plumage' },
-  { ID: 5, Category: 'Birds', 'Common name': 'Painted stork', 'Scientific name': 'Mycteria leucocephala', 'IUCN status': 'Near threatened', 'Did you know': 'Painted storks sweep their bills through water to find fish.', 'Male caption': 'Adult male', 'Female caption': 'Adult female' },
-  { ID: 6, Category: 'Reptiles', 'Common name': 'Mugger crocodile', 'Scientific name': 'Crocodylus palustris', 'IUCN status': 'Vulnerable', 'Did you know': 'Muggers can survive in both fresh and brackish water.', 'Male caption': 'Adult male', 'Female caption': 'Adult female' },
-  { ID: 7, Category: 'Butterflies', 'Common name': 'Common Mormon', 'Scientific name': 'Papilio polytes', 'IUCN status': 'Not evaluated', 'Did you know': 'Some females mimic other toxic butterflies to avoid predators.', 'Male caption': 'Male', 'Female caption': 'Female, mimic form' },
-  { ID: 8, Category: 'Trees', 'Common name': 'Palu tree', 'Scientific name': 'Manilkara hexandra', 'IUCN status': 'Not evaluated', 'Did you know': 'Palu is a hardwood tree common in dry-zone forests.', 'Male caption': 'Leaves and fruit', 'Female caption': 'Trunk and bark' }
-];
 </script>
 <script>
 /* ===== PART 3: PDF FORMAT ===== */
@@ -2390,21 +2379,16 @@ async function buildReport(g, sp) {
 
 
                 tx(
-                    lab +
-                    ' - ' +
-                    (
-                        s[
-                            lab +
-                            ' caption'
-                        ] || ''
-                    ),
+                    s[
+                        lab +
+                        ' caption'
+                    ] || '',
                     x,
                     top + 67.5,
                     8.5,
                     'italic',
                     '#2C2C2A'
                 );
-
             }
 
 
