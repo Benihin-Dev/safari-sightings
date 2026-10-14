@@ -1333,6 +1333,7 @@
    .ch{position:sticky;top:calc(var(--hh,0px) + var(--sh,0px));z-index:28;background:#F4F6F4;margin:0 -12px;padding:6px 14px 8px;box-shadow:0 6px 8px -7px rgba(0,0,0,.25)}
 #ls .cat{position:sticky;top:calc(var(--hh,0px) + var(--sh,0px) + var(--chh,0px) + 10px);z-index:27;box-shadow:0 6px 0 #F4F6F4}
 #ls .cat::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px;background:#F4F6F4}
+#fab.atend{display:none}
 </style>
 </head>
 <body>
@@ -2909,6 +2910,7 @@ async function flush() {
   $('sn').onclick = () => { $('sob').hidden = true; };
   $('sy').onclick = () => { ['guest', 'sightings', 'extras'].forEach(k => localStorage.removeItem(k)); location.reload(); };
   $('fab').onclick = () => { $('tk').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
+  new IntersectionObserver(es => { $('fab').classList.toggle('atend', es[0].isIntersecting); }, { rootMargin: '0px 0px 40px 0px' }).observe($('tk'));
   window.addEventListener('online', () => { net(); flush(); });
   window.addEventListener('offline', net);
 
