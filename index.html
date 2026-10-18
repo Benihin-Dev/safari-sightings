@@ -1334,6 +1334,17 @@
 #ls .cat{position:sticky;top:calc(var(--hh,0px) + var(--sh,0px) + var(--chh,0px) + 10px);z-index:27;box-shadow:0 6px 0 #F4F6F4}
 #ls .cat::before{content:"";position:absolute;left:0;right:0;top:-10px;height:10px;background:#F4F6F4}
 #fab.atend{display:none}
+#cf{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(8,24,18,.55);padding:20px}
+#cf.show{display:flex}
+#cf .cfb{background:#F4F6F4;border:2px solid #C9923A;border-radius:20px;padding:20px 18px 16px;max-width:320px;width:100%;text-align:center;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+#cf h4{margin:0 0 6px;font:400 21px 'DM Serif Display',Georgia,serif;color:#1E4D3A}
+#cf p{margin:0 0 14px;font:14px -apple-system,Segoe UI,sans-serif;color:#444}
+#cf .cfr{display:flex;gap:10px}
+#cf button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
+#cf button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
+.sw .clr{position:absolute;right:24px;top:calc(50% + 5px);transform:translateY(-50%);height:26px;padding:0 12px;border:0;border-radius:99px;background:#E3E8E5;color:#1E4D3A;font:700 12.5px/26px -apple-system,Segoe UI,sans-serif;cursor:pointer;display:block}
+.sw .clr[hidden]{display:none}
+.sr{padding-right:78px}
 </style>
 </head>
 <body>
@@ -1454,7 +1465,7 @@
 <div class="sc"><div id="fx"></div>
 <div class="hd"><div class="hd1"><h3 id="hello">Hello</h3><span class="net" id="net">Offline</span></div><p id="hsub"></p><div class="prog"><i id="pbar"></i></div><div class="stat"><b id="cn">0</b> spotted so far</div></div>
 <div id="main">
-<div class="bd"><div class="sw"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input class="sr" id="q" placeholder="Search wildlife..." aria-label="Search"></div><div class="ch" id="ch"></div><div id="ls"></div></div>
+<div class="bd"><div class="sw"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg><input class="sr" id="q" placeholder="Search wildlife..." aria-label="Search"><button class="clr" id="qc" type="button" aria-label="Clear search" hidden>Clear</button></div><div class="ch" id="ch"></div><div id="ls"></div></div>
 <div class="tkw"><div class="tk" id="tk"><div id="tkA"><div class="t1"><div class="ic"><svg class="icn paw" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="4.6" cy="11.2" rx="2.1" ry="2.8" transform="rotate(-22 4.6 11.2)"/><ellipse cx="9" cy="6" rx="2.2" ry="3" transform="rotate(-8 9 6)"/><ellipse cx="15" cy="6" rx="2.2" ry="3" transform="rotate(8 15 6)"/><ellipse cx="19.4" cy="11.2" rx="2.1" ry="2.8" transform="rotate(22 19.4 11.2)"/><path d="M12 11c-2.9 0-6 3.1-6 6.3 0 1.9 1.5 2.9 3.1 2.9 1.1 0 1.9-.5 2.9-.5s1.8.5 2.9.5c1.6 0 3.1-1 3.1-2.9C18 14.1 14.9 11 12 11z"/></svg></div><h4>Finished your safari?</h4></div>
 <p>Submit your sightings and get your personal PDF report. <i>Only the species you ticked are included</i>.</p>
 <button class="go" id="sgo">Submit and get your PDF <svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg></button><div class="msg" id="gm"></div></div>
@@ -2679,7 +2690,23 @@ window.buildReport = buildReport;
     f.hidden = !t || !$('done').hidden;
     f.textContent = t + ' spotted | Finish safari';
   }
-  function net() { const on = navigator.onLine; $('net').textContent = on ? 'Online' : 'Offline'; $('net').className = 'net' + (on ? ' on' : ''); }
+
+let isOn = navigator.onLine;
+function paintNet() { $('net').textContent = isOn ? 'Online' : 'Offline'; $('net').className = 'net' + (isOn ? ' on' : ''); }
+async function net() {
+  const was = isOn;
+  if (!navigator.onLine) { isOn = false; }
+  else {
+    const c = new AbortController(), t = setTimeout(() => c.abort(), 4000);
+    try { await fetch('https://www.gstatic.com/generate_204?t=' + Date.now(), { mode: 'no-cors', cache: 'no-store', signal: c.signal }); isOn = true; }
+    catch (e) { isOn = false; }
+    clearTimeout(t);
+  }
+  paintNet();
+  if (!was && isOn) flush();
+}
+setInterval(net, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) net(); });
 
   function chips() {
     const CH = ['All'].concat(ORDER.filter(c => SP.some(s => s.Category === c)), ['Other', 'Spotted']);
@@ -2830,7 +2857,22 @@ async function flush() {
   }
 
   $('ls').addEventListener('input', e => { if (e.target.id === 'ox') addv = e.target.value; });
-  $('ls').addEventListener('click', e => {
+function askUntick(name) {
+  return new Promise(res => {
+    $('cft').textContent = name;
+    $('cf').classList.add('show');
+    const done = v => { $('cf').classList.remove('show'); $('cfy').onclick = $('cfn').onclick = null; res(v); };
+    $('cfy').onclick = () => done(true);
+    $('cfn').onclick = () => done(false);
+  });
+}
+const qi = $('q'), qc = $('qc');
+const showClr = () => { qc.hidden = !qi.value; };
+qi.addEventListener('input', showClr);
+qc.addEventListener('pointerdown', e => e.preventDefault());
+qc.onclick = () => { qi.value = ''; q = ''; draw(); showClr(); };
+showClr();  
+$('ls').addEventListener('click', async e => {
     const b = e.target.closest('#oa');
     if (b) {
       const v = $('ox').value.trim();
@@ -2840,7 +2882,9 @@ async function flush() {
     if (e.target.id === 'ox') return;
     const c = e.target.closest('.cd'); if (!c) return;
     const k = c.getAttribute('data-k');
-    if (c.getAttribute('data-x') === '1') extra.splice(+k, 1);
+    const isX = c.getAttribute('data-x') === '1';
+    if (isX || tk[k]) { const nm = isX ? (extra[+k] || {}).name : (SP.find(s => String(s.ID) === k) || {})['Common name']; if (!(await askUntick(nm || 'this species'))) return; }
+    if (isX) extra.splice(+k, 1);
     else if (tk[k]) delete tk[k]; else { tk[k] = now();}
     save(); $('gm').textContent = ''; draw();
     if (c.getAttribute('data-x') !== '1') {
@@ -3110,5 +3154,6 @@ const $ = id => document.getElementById(id);
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 })();
 </script>
+<div id="cf"><div class="cfb"><h4>Remove this sighting?</h4><p id="cft"></p><div class="cfr"><button id="cfn" type="button">Keep it</button><button id="cfy" type="button" class="y">Yes, remove</button></div></div></div>
 </body>
 </html>
