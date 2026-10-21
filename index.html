@@ -1345,6 +1345,14 @@
 .sw .clr{position:absolute;right:24px;top:calc(50% + 5px);transform:translateY(-50%);height:26px;padding:0 12px;border:0;border-radius:99px;background:#E3E8E5;color:#1E4D3A;font:700 12.5px/26px -apple-system,Segoe UI,sans-serif;cursor:pointer;display:block}
 .sw .clr[hidden]{display:none}
 .sr{padding-right:78px}
+#em{position:fixed;inset:0;z-index:80;display:none;align-items:center;justify-content:center;background:rgba(8,24,18,.55);padding:20px}
+#em.show{display:flex}
+#em .cfb{background:#F4F6F4;border:2px solid #C9923A;border-radius:20px;padding:20px 18px 16px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+#em h4{margin:0 0 8px;font:400 21px 'DM Serif Display',Georgia,serif;color:#1E4D3A}
+#em p{margin:0 0 14px;font:14px/1.5 -apple-system,Segoe UI,sans-serif;color:#444}
+#em .cfr{display:flex;gap:10px}
+#em button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
+#em button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
 </style>
 </head>
 <body>
@@ -1419,7 +1427,7 @@
       <label for="name">Guest Name</label>
       <input id="name" autocomplete="name" placeholder="Enter your name">
 
-      <label for="email">Email Address</label>
+      <label for="email">Email Address <span style="font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></label>
       <input id="email" type="email" autocomplete="email" placeholder="name@email.com">
 
       <label>Select Destination Park</label>
@@ -3121,6 +3129,14 @@ const $ = id => document.getElementById(id);
     window.addEventListener('online', sendLogins);
     sendLogins();
 
+function askNoEmail() {
+  return new Promise(res => {
+    $('em').classList.add('show');
+    const done = v => { $('em').classList.remove('show'); $('emc').onclick = $('ema').onclick = null; res(v); };
+    $('emc').onclick = () => done(true);
+    $('ema').onclick = () => done(false);
+  });
+}
     $('go').onclick = async () => {
       const g = {
         name: $('name').value.trim(),
@@ -3131,8 +3147,9 @@ const $ = id => document.getElementById(id);
       const err = m => { $('err').textContent = m; };
 
       if (!g.name) return err('Please enter your name.');
-      if (!/^\S+@\S+\.\S+$/.test(g.email)) return err('Please enter a valid email address.');
+      if (g.email && !/^\S+@\S+\.\S+$/.test(g.email)) return err('Please enter a valid email address, or leave it empty.');
       if (!g.park) return err('Please select a destination park.');
+if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
       if (!g.date) return err('Please choose a date.');
 
       err('');
@@ -3156,5 +3173,6 @@ const $ = id => document.getElementById(id);
 })();
 </script>
 <div id="cf"><div class="cfb"><h4>Remove this sighting?</h4><p id="cft"></p><div class="cfr"><button id="cfn" type="button">Keep it</button><button id="cfy" type="button" class="y">Yes, remove</button></div></div></div>
+<div id="em"><div class="cfb"><h4>No email address entered</h4><p>Without an email address, a copy of your sightings report will not be sent to you by email. You can still download your PDF at the end of your safari.</p><div class="cfr"><button id="emc" type="button" class="y">Continue without email</button><button id="ema" type="button">Add email</button></div></div></div>
 </body>
 </html>
