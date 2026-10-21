@@ -2218,7 +2218,7 @@ async function buildReport(g, sp) {
                 n++;
                 tx(String(n).padStart(2, '0'), 18, y + 1.5, 10, 'bold', CC[c]);
                 tx(s['Common name'], 28, y + 1.5, 12.5, 'bold', '#2C2C2A');
-                tx('Added by guest' + (s.time ? '   |   Spotted at ' + s.time : ''), 28, y + 7, 9.5, 'italic', '#6B6A65');
+                tx('Added by ' + g.name + (s.time ? '   |   Spotted at ' + s.time : ''), 28, y + 7, 9.5, 'italic', '#6B6A65');
                 tick(188.8, y + 3, 3.2, '#3B6D11');
                 y += 16;
                 continue;
