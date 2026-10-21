@@ -1533,18 +1533,18 @@ const CATS = [
     'Amphibians',
     'Fish',
     'Butterflies',
-    'Trees',
+    'Plants',
     'Other'
 ];
 
 const CC = {
     Mammals: '#B5651D',
-    Birds: '#2F6F9F',
+    Birds: '#356B8C',
     Reptiles: '#4C7A2E',
     Amphibians: '#6B7A3A',
     Fish: '#397A8A',
     Butterflies: '#8A5A9E',
-    Trees: '#3F6F45',
+    Plants: '#3F6F45',
     Other: '#7A4F8F'
 };
 
@@ -2632,8 +2632,8 @@ window.buildReport = buildReport;
 /* ===== PART 2: SIGHTING TICK PAGE ===== */
 (function () {
   const $ = id => document.getElementById(id);
-  const CAT = { Mammals: '#8B5A2B', Birds: '#2B90D9', Reptiles: '#4A7C59', Amphibians: '#8A9A5B', Fish: '#5B84B1', Butterflies: '#C9651B', Trees: '#2D5A27', Other: '#7851A9' };
-  const ORDER = ['Mammals', 'Birds', 'Reptiles', 'Amphibians', 'Fish', 'Butterflies', 'Trees'];
+  const CAT = { Mammals: '#8B5A2B', Birds: '#356B8C', Reptiles: '#4A7C59', Amphibians: '#8A9A5B', Fish: '#5B84B1', Butterflies: '#C9651B', Plants: '#2D5A27', Other: '#7851A9' };
+  const ORDER = ['Mammals', 'Birds', 'Reptiles', 'Amphibians', 'Fish', 'Butterflies', 'Plants'];
   const ST = {
     'Critically endangered': ['CRITICALLY ENDANGERED', '#FBE4E4', '#8C1D1D'],
     'Endangered': ['ENDANGERED', '#FBE4E4', '#8C1D1D'],
@@ -2870,7 +2870,7 @@ const qi = $('q'), qc = $('qc');
 const showClr = () => { qc.hidden = !qi.value; };
 qi.addEventListener('input', showClr);
 qc.addEventListener('pointerdown', e => e.preventDefault());
-qc.onclick = () => { qi.value = ''; q = ''; draw(); showClr(); };
+qc.onclick = () => { qi.value = ''; q = ''; draw(); jumpTop(); showClr(); };
 showClr();  
 $('ls').addEventListener('click', async e => {
     const b = e.target.closest('#oa');
@@ -2897,14 +2897,15 @@ $('ls').addEventListener('click', async e => {
       if (!was) celebrate(k);
     }
   });
-  $('ch').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cat = b.getAttribute('data-c'); chips(); draw(); const ls = $('ls'); [...ls.querySelectorAll('.cd')].forEach((el, i) => { el.style.animationDelay = Math.min(i, 12) * 40 + 'ms'; }); ls.classList.add('stag'); setTimeout(() => ls.classList.remove('stag'), 900); });
-  $('q').addEventListener('input', e => {
-  q = e.target.value.trim(); draw();
+function jumpTop() {
   const cs = getComputedStyle($('sight'));
   const stack = ['--hh', '--sh', '--chh'].reduce((a, v) => a + (parseFloat(cs.getPropertyValue(v)) || 0), 0);
   const y = $('ls').getBoundingClientRect().top + scrollY - stack - 8;
   if (scrollY > y) scrollTo(0, Math.max(0, y));
-});
+}
+$('ch').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cat = b.getAttribute('data-c'); chips(); draw(); jumpTop(); const ls = $('ls'); [...ls.querySelectorAll('.cd')].forEach((el, i) => { el.style.animationDelay = Math.min(i, 12) * 40 + 'ms'; }); ls.classList.add('stag'); setTimeout(() => ls.classList.remove('stag'), 900); });
+$('q').addEventListener('input', e => { q = e.target.value.trim(); draw(); jumpTop(); });
+
 (function () {
   const root = document.querySelector('#sight'), hd = root.querySelector('.hd'), sw = root.querySelector('.sw'), ch = root.querySelector('.ch');
   function set() { root.style.setProperty('--hh', hd.offsetHeight + 'px'); root.style.setProperty('--sh', sw.offsetHeight + 'px'); root.style.setProperty('--chh', ch.offsetHeight + 'px'); }
