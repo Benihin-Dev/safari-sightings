@@ -2711,7 +2711,7 @@ async function net() {
     clearTimeout(t);
   }
   paintNet();
-  if (!was && isOn) flush();
+    if (!was && isOn) { flush(); sendSightings(); }
 }
 setInterval(net, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) net(); });
@@ -2831,6 +2831,24 @@ async function flush() {
   flushing = false;
 }
 
+  /* ---- Save the ticked list to the Google Sheet when the guest finishes ---- */
+  async function sendSightings() {
+    if (CONFIG.API.startsWith('PASTE')) return;
+    const q = JSON.parse(localStorage.getItem('sightQueue') || '[]'), rest = [];
+    for (const j of q) {
+      try { await fetch(CONFIG.API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(j) }); }
+      catch (e) { rest.push(j); }
+    }
+    localStorage.setItem('sightQueue', JSON.stringify(rest));
+  }
+  function queueSightings() {
+    const job = { action: 'saveSightings', sid: G.sid, name: G.name, email: G.email, park: G.parkLabel, date: fmt(G.date), species: reportRows().map(r => r['Common name']) };
+    const q = JSON.parse(localStorage.getItem('sightQueue') || '[]').filter(x => x.sid !== G.sid);
+    q.push(job);
+    localStorage.setItem('sightQueue', JSON.stringify(q));
+    sendSightings();
+  }
+
   /* ---- PDF file name + email text (sent to Apps Script with every submission) ---- */
   const cleanName = t => String(t).replace(/[\\/:*?"<>|]+/g, '').replace(/\s+/g, ' ').trim();
   const reportFileName = () => cleanName(G.parkLabel + ' Sighting Report (' + G.name + ')') + '.pdf';
@@ -2929,6 +2947,7 @@ $('q').addEventListener('input', e => { q = e.target.value.trim(); draw(); jumpT
   $('no').onclick = () => { $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm'); };
   $('yes').onclick = async () => {
     const n = total();
+    queueSightings();
     $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm');
     $('main').hidden = true; $('done').hidden = false; $('tyn').textContent = G.name; $('typ').textContent = G.parkLabel; $('tyd').textContent = fmt(G.date).toUpperCase(); document.querySelector('#sight .hd').style.display = 'none'; $('after').hidden = true; $('fbm').textContent = ''; $('fab').hidden = true;
     $('dsum').textContent = 'Preparing your report...'; $('dl').disabled = true;
@@ -2957,7 +2976,7 @@ $('mailnote').textContent = G.email
   $('sy').onclick = () => { ['guest', 'sightings', 'extras'].forEach(k => localStorage.removeItem(k)); location.reload(); };
   $('fab').onclick = () => { $('tk').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   new IntersectionObserver(es => { $('fab').classList.toggle('atend', es[0].isIntersecting); }, { rootMargin: '0px 0px 40px 0px' }).observe($('tk'));
-  window.addEventListener('online', () => { net(); flush(); });
+    window.addEventListener('online', () => { net(); flush(); sendSightings(); });
   window.addEventListener('offline', net);
 
   window.openSight = function () {
@@ -2965,7 +2984,7 @@ $('mailnote').textContent = G.email
     $('login').hidden = true; $('sight').hidden = false;
     document.querySelector('.wrap').classList.add('in-sight');
     net(); chips(); draw(); window.scrollTo(0, 0);
-    cacheImages(); flush();
+      cacheImages(); flush(); sendSightings();
   };
 })();
 
