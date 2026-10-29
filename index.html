@@ -1581,51 +1581,43 @@ const FEEDBACK = CONFIG.FEEDBACK;
    ============================================================ */
 
 async function img(u) {
-
-    if (!u) {
-        return null;
-    }
-
+    if (!u) return null;
     try {
+        let blob = null;
 
-        const cache = await caches.open('img');
+        try {
+            const cache = await caches.open('img');
+            const hit = await cache.match(u);
+            if (hit && hit.ok) blob = await hit.blob();
+        } catch (e) { }
 
-        const response = await cache.match(u);
-
-        if (!response) {
-            return null;
+        if (!blob && navigator.onLine) {
+            try {
+                const r = await fetch(u, { mode: 'cors' });
+                if (r.ok) blob = await r.blob();
+            } catch (e) { }
         }
+        if (!blob) { window.missingPics = (window.missingPics || 0) + 1; return null; }
 
-        const blob = await response.blob();
-
-        const bitmap = await createImageBitmap(blob);
+        const url = URL.createObjectURL(blob);
+        const im = new Image();
+        await new Promise((res, rej) => { im.onload = res; im.onerror = rej; im.src = url; });
 
         const canvas = document.createElement('canvas');
-
         canvas.width = 600;
         canvas.height = 450;
-
         const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, 600, 450);
+        ctx.drawImage(im, 0, 0, 600, 450);
+        URL.revokeObjectURL(url);
 
-        ctx.drawImage(
-            bitmap,
-            0,
-            0,
-            600,
-            450
-        );
-	bitmap.close();
-	
-const out = canvas.toDataURL('image/jpeg', 0.7);
-	
-canvas.width = canvas.height = 0;
-
-	return out;
-       
+        const out = canvas.toDataURL('image/jpeg', 0.7);
+        canvas.width = canvas.height = 0;
+        return out;
     } catch (e) {
-
+        window.missingPics = (window.missingPics || 0) + 1;
         return null;
-
     }
 }
 
@@ -2784,8 +2776,15 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) net(
   async function cacheImages() {
     try {
       const c = await caches.open('img');
-      for (const s of SP) for (const u of [s['Male photo link'], s['Female photo link']])
-        if (u && !(await c.match(u))) { try { await c.put(u, await fetch(u, { mode: 'cors' })); } catch (e) { } }
+      for (const s of SP) for (const u of [s['Male photo link'], s['Female photo link']]) {
+        if (!u) continue;
+        const hit = await c.match(u);
+        if (hit && hit.ok) continue;
+        try {
+          const r = await fetch(u, { mode: 'cors' });
+          if (r.ok) await c.put(u, r);
+        } catch (e) { }
+      }
     } catch (e) { }
   }
 
@@ -2842,7 +2841,7 @@ async function flush() {
     localStorage.setItem('sightQueue', JSON.stringify(rest));
   }
   function queueSightings() {
-    const job = { action: 'saveSightings', sid: G.sid, name: G.name, email: G.email, park: G.parkLabel, date: fmt(G.date), species: reportRows().map(r => r['Common name']) };
+    const job = { action: 'saveSightings', sid: G.sid, name: G.name, email: G.email, park: G.parkLabel, date: fmt(G.date), species: reportRows().map(r => r['Common name']), times: reportRows().map(r => r.time || '') };
     const q = JSON.parse(localStorage.getItem('sightQueue') || '[]').filter(x => x.sid !== G.sid);
     q.push(job);
     localStorage.setItem('sightQueue', JSON.stringify(q));
@@ -2944,8 +2943,8 @@ $('q').addEventListener('input', e => { q = e.target.value.trim(); draw(); jumpT
     $('cq').textContent = 'Finish your safari with ' + n + ' sighting' + (n > 1 ? 's' : '') + '?';
     $('tkA').hidden = true; $('tkB').hidden = false; $('tk').classList.add('confirm');
   };
-  $('no').onclick = () => { $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm'); };
-  $('yes').onclick = async () => {
+  $('no').onclick = () => { $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm'); }; 
+$('yes').onclick = async () => {
     const n = total();
     queueSightings();
     $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm');
@@ -2957,10 +2956,11 @@ $('mailnote').textContent = G.email
     window.scrollTo(0, 0);
     try {
       const rows = reportRows();
+ window.missingPics = 0;
       doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, rows);
       const job = { id: Date.now() + '-' + Math.random().toString(36).slice(2), sid: G.sid, name: G.name, email: G.email, park: G.parkLabel, date: fmt(G.date), species: rows.map(r => r['Common name']), pdf: doc.output('blob'), fileName: reportFileName(), subject: emailSubject(), body: emailText(), htmlBody: emailHtml() };
-      try { await qPut(job); } catch (e) { console.error('Queue failed', e); }
-      $('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' recorded and every moment is becoming a beautiful memory from your safari journey.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
+if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';      
+$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' recorded and every moment is becoming a beautiful memory from your safari journey.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
       $('dl').disabled = false;
       flush();
     } catch (err) {
@@ -2968,7 +2968,24 @@ $('mailnote').textContent = G.email
       $('dsum').textContent = 'Sorry, the report could not be created. Tap Back to sightings and try again.';
     }
   };
-  $('dl').onclick = () => { if (!doc) return; doc.save(reportFileName()); $('after').hidden = false; };
+    $('dl').onclick = async () => {
+    if (!doc) return;
+    if (window.missingPics && navigator.onLine) {
+      window.missingPics = 0;
+      try { doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, reportRows()); } catch (e) { }
+    }
+    const name = reportFileName();
+    try {
+      const f = new File([doc.output('blob')], name, { type: 'application/pdf' });
+      if (navigator.canShare && navigator.canShare({ files: [f] })) {
+        await navigator.share({ files: [f], title: name });
+        $('after').hidden = false;
+        return;
+      }
+    } catch (e) { if (e && e.name === 'AbortError') return; }
+    doc.save(name);
+    $('after').hidden = false;
+  };
   $('fb').onclick = () => { window.open(CONFIG.FEEDBACK, '_blank'); $('fbm').textContent = 'Opens your feedback form.'; };
   $('back').onclick = () => { $('done').hidden = true; $('main').hidden = false; document.querySelector('#sight .hd').style.display = ''; header(); };
   $('so').onclick = () => { $('sob').hidden = false; };
