@@ -2989,7 +2989,7 @@ $('mailnote').textContent = G.email
       doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, rows);
 if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';
 if (window.missingPics) popup('Some pictures are missing', 'Some pictures could not be saved on this phone, so they are missing from this copy.' + (G.email ? ' The copy emailed to you will be complete.' : '') + ' When you have signal, tap Download PDF again to get the full version.', 'OK');    
-$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' recorded and every moment is becoming a beautiful memory from your safari journey.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
+$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Every moment from your safari journey is turning into a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
       $('dl').disabled = false;
 $('after').hidden = false;
       flush();
