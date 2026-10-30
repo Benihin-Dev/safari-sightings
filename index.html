@@ -1353,6 +1353,26 @@
 #em .cfr{display:flex;gap:10px}
 #em button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
 #em button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
+/* ===== PREPARING DOTS ===== */
+.dots i{font-style:normal;display:inline-block;opacity:.15}
+.dots i:nth-child(1){animation:dot1 1.8s infinite}
+.dots i:nth-child(2){animation:dot2 1.8s infinite}
+.dots i:nth-child(3){animation:dot3 1.8s infinite}
+@keyframes dot1{0%{opacity:.15}8%,88%{opacity:1}96%,100%{opacity:.15}}
+@keyframes dot2{0%,28%{opacity:.15}36%,88%{opacity:1}96%,100%{opacity:.15}}
+@keyframes dot3{0%,52%{opacity:.15}60%,88%{opacity:1}96%,100%{opacity:.15}}
+@media (prefers-reduced-motion: reduce){.dots i{opacity:1}}
+
+
+#pp{position:fixed;inset:0;z-index:90;display:none;align-items:center;justify-content:center;background:rgba(8,24,18,.55);padding:20px}
+#pp.show{display:flex}
+#pp .cfb{background:#F4F6F4;border:2px solid #C9923A;border-radius:20px;padding:20px 18px 16px;max-width:340px;width:100%;text-align:center;box-shadow:0 20px 44px rgba(0,0,0,.4)}
+#pp h4{margin:0 0 8px;font:400 21px 'DM Serif Display',Georgia,serif;color:#1E4D3A}
+#pp p{margin:0 0 14px;font:14px/1.5 -apple-system,Segoe UI,sans-serif;color:#444}
+#pp .cfr{display:flex;gap:10px}
+#pp button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
+#pp button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
+
 </style>
 </head>
 <body>
@@ -1483,7 +1503,8 @@
 </div>
 <div id="done" class="dn" hidden><div class="ty"><div class="ty-logo"><img alt="Jastan logo" src="data:image/png;base64,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"></div><div class="ty-h">Thank you</div><div class="ty-n" id="tyn"></div><div class="ty-p" id="typ"></div><div class="ty-d" id="tyd"></div></div><div class="ok"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div><h4>What a safari! Your wildlife report is ready.</h4><p id="dsum"></p>
 <div class="ac"><button class="pr" id="dl"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download PDF</button><button id="back"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Back to sightings</button></div>
-<div id="after" hidden><div class="nt">Your PDF downloads to the phone.<br>Report saved on this phone.</div><button class="fbk" id="fb"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></svg>Give feedback</button><div class="nt2" id="fbm"></div></div>
+<div id="after" hidden><div class="nt" id="dlnote" hidden>Your PDF downloads to the phone.<br>Report saved on this phone.</div>
+<button class="fbk" id="fb"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></svg>Give feedback</button><div class="nt2" id="fbm"></div></div>
 <div class="nt2" id="mailnote" style="margin-top:12px"></div></div>
 </div></section>
 <button id="fab" hidden></button>
@@ -2936,7 +2957,15 @@ $('q').addEventListener('input', e => { q = e.target.value.trim(); draw(); jumpT
   function set() { root.style.setProperty('--hh', hd.offsetHeight + 'px'); root.style.setProperty('--sh', sw.offsetHeight + 'px'); root.style.setProperty('--chh', ch.offsetHeight + 'px'); }
   [hd, sw, ch].forEach(el => new ResizeObserver(set).observe(el)); set();
 })();
-  $('sgo').onclick = () => {
+function popup(title, text, yesLabel, noLabel, onYes) {
+  $('pph').textContent = title; $('ppt').textContent = text;
+  $('ppy').textContent = yesLabel; $('ppn').textContent = noLabel || ''; $('ppn').hidden = !noLabel;
+  $('pp').classList.add('show');
+  $('ppy').onclick = () => { $('pp').classList.remove('show'); if (onYes) onYes(); };
+  $('ppn').onclick = () => { $('pp').classList.remove('show'); };
+}
+  
+$('sgo').onclick = () => {
     const n = total();
     if (!n) { $('gm').textContent = 'Tick at least one sighting first'; return; }
     $('gm').textContent = '';
@@ -2948,44 +2977,65 @@ $('yes').onclick = async () => {
     const n = total();
     queueSightings();
     $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm');
-    $('main').hidden = true; $('done').hidden = false; $('tyn').textContent = G.name; $('typ').textContent = G.parkLabel; $('tyd').textContent = fmt(G.date).toUpperCase(); document.querySelector('#sight .hd').style.display = 'none'; $('after').hidden = true; $('fbm').textContent = ''; $('fab').hidden = true;
-    $('dsum').textContent = 'Preparing your report...'; $('dl').disabled = true;
+    $('main').hidden = true; $('done').hidden = false; $('tyn').textContent = G.name; $('typ').textContent = G.parkLabel; $('tyd').textContent = fmt(G.date).toUpperCase(); document.querySelector('#sight .hd').style.display = 'none';$('after').hidden = true; $('dlnote').hidden = true; $('fbm').textContent = ''; $('fab').hidden = true;
+    $('dsum').innerHTML = 'Preparing your report<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>'; $('dl').disabled = true;
 $('mailnote').textContent = G.email
-  ? 'A copy is also emailed to you once you have signal.'
+  ? 'Your report will be emailed to you shortly.'
   : 'As you did not enter an email address, we are unable to send you an emailed copy of this PDF. Please use the Download PDF button above to save your report.';
     window.scrollTo(0, 0);
     try {
       const rows = reportRows();
  window.missingPics = 0;
       doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, rows);
-      const job = { id: Date.now() + '-' + Math.random().toString(36).slice(2), sid: G.sid, name: G.name, email: G.email, park: G.parkLabel, date: fmt(G.date), species: rows.map(r => r['Common name']), pdf: doc.output('blob'), fileName: reportFileName(), subject: emailSubject(), body: emailText(), htmlBody: emailHtml() };
-if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';      
+if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';
+if (window.missingPics) popup('Some pictures are missing', 'Some pictures could not be saved on this phone, so they are missing from this copy.' + (G.email ? ' The copy emailed to you will be complete.' : '') + ' When you have signal, tap Download PDF again to get the full version.', 'OK');    
 $('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' recorded and every moment is becoming a beautiful memory from your safari journey.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
       $('dl').disabled = false;
+$('after').hidden = false;
       flush();
     } catch (err) {
       console.error(err);
       $('dsum').textContent = 'Sorry, the report could not be created. Tap Back to sightings and try again.';
+popup('Report not ready', 'We could not prepare your report. Please go to an area with coverage and try again.', 'Try again', 'Close', () => $('yes').onclick());
     }
   };
-    $('dl').onclick = async () => {
-    if (!doc) return;
-    if (window.missingPics && navigator.onLine) {
-      window.missingPics = 0;
-      try { doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, reportRows()); } catch (e) { }
-    }
-    const name = reportFileName();
-    try {
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+let iosTip = false;
+function failPop() {
+  popup('Download did not work', 'Please go to an area with coverage and try again.', 'Try again', 'Close', () => $('dl').onclick());
+}
+async function saveNow(name) {
+  try {
+    if (isIOS) {
       const f = new File([doc.output('blob')], name, { type: 'application/pdf' });
       if (navigator.canShare && navigator.canShare({ files: [f] })) {
         await navigator.share({ files: [f], title: name });
-        $('after').hidden = false;
+        $('dlnote').hidden = false;
         return;
       }
-    } catch (e) { if (e && e.name === 'AbortError') return; }
+    }
     doc.save(name);
-    $('after').hidden = false;
-  };
+    $('dlnote').hidden = false;
+  } catch (e) {
+    if (e && e.name === 'AbortError') return;
+    failPop();
+  }
+}
+$('dl').onclick = async () => {
+  if (!doc) return;
+  let rebuilt = false;
+  if (window.missingPics && navigator.onLine) {
+    window.missingPics = 0;
+    try { doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, reportRows()); rebuilt = true; } catch (e) { failPop(); return; }
+  }
+  const name = reportFileName();
+  if (isIOS && (!iosTip || rebuilt)) {
+    iosTip = true;
+    popup('Save your report', 'On the next screen, tap Save to Files to keep your report on this phone.', 'Continue', '', () => saveNow(name));
+    return;
+  }
+  saveNow(name);
+};
   $('fb').onclick = () => { window.open(CONFIG.FEEDBACK, '_blank'); $('fbm').textContent = 'Opens your feedback form.'; };
   $('back').onclick = () => { $('done').hidden = true; $('main').hidden = false; document.querySelector('#sight .hd').style.display = ''; header(); };
   $('so').onclick = () => { $('sob').hidden = false; };
@@ -3211,6 +3261,7 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
     if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js');
 })();
 </script>
+<div id="pp"><div class="cfb"><h4 id="pph"></h4><p id="ppt"></p><div class="cfr"><button id="ppn" type="button"></button><button id="ppy" type="button" class="y"></button></div></div></div>
 <div id="cf"><div class="cfb"><h4>Remove this sighting?</h4><p id="cft"></p><div class="cfr"><button id="cfn" type="button">Keep it</button><button id="cfy" type="button" class="y">Yes, remove</button></div></div></div>
 <div id="em"><div class="cfb"><h4>No email address entered</h4><p>Without an email address, a copy of your sightings report will not be sent to you by email. You can still download your PDF at the end of your safari.</p><div class="cfr"><button id="emc" type="button" class="y">Continue without email</button><button id="ema" type="button">Add email</button></div></div></div>
 </body>
