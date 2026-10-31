@@ -1600,48 +1600,52 @@ const FEEDBACK = CONFIG.FEEDBACK;
    PHOTO LOADER
    Reads photos saved in browser cache
    ============================================================ */
+window.shrinkImg = async function (blob) {
+  let bmp;
+  try { bmp = await createImageBitmap(blob); }
+  catch (e) {
+    const u = URL.createObjectURL(blob), im = new Image();
+    await new Promise((ok, no) => { im.onload = ok; im.onerror = no; im.src = u; });
+    bmp = im; URL.revokeObjectURL(u);
+  }
+  const c = document.createElement('canvas'); c.width = 480; c.height = 360;
+  const x = c.getContext('2d');
+  x.fillStyle = '#FFFFFF'; x.fillRect(0, 0, 480, 360);
+  x.drawImage(bmp, 0, 0, 480, 360);
+  if (bmp.close) bmp.close();
+  const out = await new Promise(r => c.toBlob(r, 'image/jpeg', 0.6));
+  c.width = c.height = 0;
+  return out;
+};
 
 async function img(u) {
-    if (!u) return null;
+  if (!u) return null;
+  try {
+    let blob = null;
     try {
-        let blob = null;
+      const hit = await (await caches.open('img2')).match(u);
+      if (hit && hit.ok) blob = await hit.blob();
+    } catch (e) { }
 
-        try {
-            const cache = await caches.open('img');
-            const hit = await cache.match(u);
-            if (hit && hit.ok) blob = await hit.blob();
-        } catch (e) { }
-
-        if (!blob && navigator.onLine) {
-            try {
-                const r = await fetch(u, { mode: 'cors' });
-                if (r.ok) blob = await r.blob();
-            } catch (e) { }
-        }
-        if (!blob) { window.missingPics = (window.missingPics || 0) + 1; return null; }
-
-        const url = URL.createObjectURL(blob);
-        const im = new Image();
-        await new Promise((res, rej) => { im.onload = res; im.onerror = rej; im.src = url; });
-
-        const canvas = document.createElement('canvas');
-        canvas.width = 600;
-        canvas.height = 450;
-        const ctx = canvas.getContext('2d');
-        ctx.fillStyle = '#FFFFFF';
-        ctx.fillRect(0, 0, 600, 450);
-        ctx.drawImage(im, 0, 0, 600, 450);
-        URL.revokeObjectURL(url);
-
-        const out = canvas.toDataURL('image/jpeg', 0.7);
-        canvas.width = canvas.height = 0;
-        return out;
-    } catch (e) {
-        window.missingPics = (window.missingPics || 0) + 1;
-        return null;
+    if (!blob && navigator.onLine) {
+      try {
+        const r = await fetch(u, { mode: 'cors' });
+        if (r.ok) blob = await window.shrinkImg(await r.blob());
+      } catch (e) { }
     }
-}
+    if (!blob) { window.missingPics = (window.missingPics || 0) + 1; return null; }
 
+    return await new Promise((res, rej) => {
+      const f = new FileReader();
+      f.onload = () => res(f.result);
+      f.onerror = rej;
+      f.readAsDataURL(blob);
+    });
+  } catch (e) {
+    window.missingPics = (window.missingPics || 0) + 1;
+    return null;
+  }
+}
 
 /* ============================================================
    BUILD PDF
@@ -1651,7 +1655,8 @@ async function buildReport(g, sp) {
 
     const doc = new jspdf.jsPDF({
         unit: 'mm',
-        format: 'a4'
+        format: 'a4',
+        compress: true
     });
 
     const W = 210;
@@ -2157,6 +2162,16 @@ async function buildReport(g, sp) {
        SPECIES
        ======================================================== */
 
+    const urls = [...new Set(sp.flatMap(s => [s['Male photo link'], s['Female photo link']]).filter(Boolean))];
+    const pics = {};
+    let next = 0;
+    await Promise.all(Array.from({ length: 4 }, async () => {
+        while (next < urls.length) {
+            const u = urls[next++];
+            pics[u] = await img(u);
+        }
+    }));
+
     let y = 157;
 
     let n = 0;
@@ -2361,14 +2376,7 @@ async function buildReport(g, sp) {
                         : 'Male';
 
 
-                const data =
-                    await img(
-                        s[
-                            lab +
-                            ' photo link'
-                        ]
-                    );
-
+                            const data = pics[s[lab + ' photo link']];
 
                 if (data) {
 
@@ -2794,20 +2802,23 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) net(
     else if (n === 5) toast('5 spotted. Sharp eyes!');
   }
 
-  async function cacheImages() {
-    try {
-      const c = await caches.open('img');
-      for (const s of SP) for (const u of [s['Male photo link'], s['Female photo link']]) {
-        if (!u) continue;
-        const hit = await c.match(u);
-        if (hit && hit.ok) continue;
-        try {
-          const r = await fetch(u, { mode: 'cors' });
-          if (r.ok) await c.put(u, r);
-        } catch (e) { }
-      }
-    } catch (e) { }
-  }
+async function cacheImages() {
+  try {
+    caches.delete('img');
+    const c = await caches.open('img2');
+    for (const s of SP) for (const u of [s['Male photo link'], s['Female photo link']]) {
+      if (!u) continue;
+      const hit = await c.match(u);
+      if (hit && hit.ok) continue;
+      try {
+        const r = await fetch(u, { mode: 'cors' });
+        if (!r.ok) continue;
+        const small = await window.shrinkImg(await r.blob());
+        await c.put(u, new Response(small, { headers: { 'Content-Type': 'image/jpeg' } }));
+      } catch (e) { }
+    }
+  } catch (e) { }
+}
 
 const qdb = () => new Promise((res, rej) => {
   const r = indexedDB.open('safariQueue', 1);
@@ -2989,7 +3000,7 @@ $('mailnote').textContent = G.email
       doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, rows);
 if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';
 if (window.missingPics) popup('Some pictures are missing', 'Some pictures could not be saved on this phone, so they are missing from this copy.' + (G.email ? ' The copy emailed to you will be complete.' : '') + ' When you have signal, tap Download PDF again to get the full version.', 'OK');    
-$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Turning every safari moment into a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
+$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Every moment from your safari journey is turning into a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
       $('dl').disabled = false;
 $('after').hidden = false;
       flush();
