@@ -3066,7 +3066,7 @@ const showReady = async () => {
   await wait(900);
   if (myRun !== runId) return;
   $('dsum').textContent = readyMsg;       /* step 2: sightings message slides in */
-  if (window.PdfProgress) PdfProgress.reveal($('dsum')); else $('dsum').hidden = false;
+  if (window.PdfProgress) PdfProgress.reveal($('dsum'), -18); else $('dsum').hidden = false;
   await wait(800);
   if (myRun !== runId) return;
   reportReady = true;                     /* step 3: Download button becomes bright */
