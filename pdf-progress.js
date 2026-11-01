@@ -24,8 +24,8 @@
   var STAGES = [
     [0,  'Gathering your sightings...',        'We are still gathering your sightings.'],
     [15, 'Developing your wildlife photos...', 'We are still developing your wildlife photos.'],
-    [45, 'Laying out your safari pages...',    'We are still laying out your safari pages.'],
-    [80, 'Adding the final touches...',        'We are adding the final touches to your report.']
+    [50, 'Laying out your safari pages...',    'We are still laying out your safari pages.'],
+    [90, 'Adding the final touches...',        'We are adding the final touches to your report.']
   ];
   var FAIL_REASON = 'The report could not be created.';
   var FAIL_STAGE  = 'Something went wrong. Please try again.';
