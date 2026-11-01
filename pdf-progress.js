@@ -48,7 +48,7 @@
     '.pp-stage{margin-top:6px;max-height:18px;overflow:hidden;text-align:center;font:italic 13px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);transition:opacity .4s ease,max-height .5s ease .3s,margin-top .5s ease .3s;animation:ppfade .5s ease}' +
     '.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;margin-top:0}' +
     '.pp-wrap[data-state=done] .pp-ring{animation:ppglow 1.8s ease-out}' +
-'.pp-wrap[data-state=done]{animation:ppgone .5s ease .9s both}' +
+'.pp-wrap[data-state=done]{overflow:hidden;animation:ppgone .5s ease .9s both}' +
 '@keyframes ppgone{from{opacity:1;max-height:140px;transform:scale(1)}to{opacity:0;max-height:0;margin-bottom:0;transform:scale(.8)}}' +
     '.pp-wrap[data-state=fail] .pp-fill{stroke:#B3261E;filter:none}' +
     '.pp-wrap[data-state=fail] .pp-stage{color:#B3261E}' +
