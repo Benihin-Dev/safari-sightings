@@ -45,8 +45,10 @@
     '.pp-doc i{position:relative;z-index:1;display:block;height:2.5px;border-radius:2px;background:rgba(30,77,58,.3)}' +
     '.pp-doc i.s{width:60%}' +
     '.pp-doc::after{content:"";position:absolute;top:0;right:0;z-index:2;border-top:8px solid var(--pp-paper);border-left:8px solid rgba(30,77,58,.28)}' +
-    '.pp-stage{margin-top:6px;max-height:18px;overflow:hidden;text-align:center;font:italic 13px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);transition:opacity .4s ease,max-height .5s ease .3s,margin-top .5s ease .3s;animation:ppfade .5s ease}' +
-    '.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;margin-top:0}' +
+  '.pp-stage{margin-top:8px;min-height:20px;max-height:24px;overflow:hidden;text-align:center;font:italic 14px/20px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);opacity:1;transform:none;transition:opacity .45s ease,transform .45s cubic-bezier(.2,.8,.3,1),max-height .5s ease .3s,margin-top .5s ease .3s}' +
+'.pp-stage.out{opacity:0;transform:translateY(-10px)}' +
+'.pp-stage.pre{opacity:0;transform:translateY(12px);transition:none}' +
+'.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;min-height:0;margin-top:0}' +
     '.pp-wrap[data-state=done] .pp-ring{animation:ppglow 1.8s ease-out}' +
 '.pp-wrap[data-state=done]{overflow:hidden;animation:ppgone .5s ease .9s both}' +
 '@keyframes ppgone{from{opacity:1;max-height:140px;transform:scale(1)}to{opacity:0;max-height:0;margin-bottom:0;transform:scale(.8)}}' +
@@ -74,7 +76,9 @@
   var C = 2 * Math.PI * 70;
   var root = null, el = {};
   var active = false, finishing = false, fired = false, cb = null, timer = 0;
-  var target = 0, shown = 0, raf = 0, lastText = '';
+   var target = 0, shown = 0, raf = 0, lastText = '';
+  var stageShown = 0, stageAt = 0, sayTimer = 0;
+  var DWELL = 900;   /* how long each message stays (milliseconds) */
 
   function reduced() {
     return window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -113,13 +117,21 @@
     return k;
   }
 
+  function slideIn(s, t) {
+    s.textContent = t;
+    s.className = 'pp-stage pre';
+    void s.offsetWidth;
+    s.className = 'pp-stage';
+  }
+
   function say(t) {
     if (t === lastText) return;
     lastText = t;
-    el.stage.textContent = t;
-    el.stage.style.animation = 'none';
-    void el.stage.offsetWidth;
-    el.stage.style.animation = '';
+    clearTimeout(sayTimer);
+    var s = el.stage;
+    if (reduced() || !s.textContent) { slideIn(s, t); return; }
+    s.className = 'pp-stage out';
+    sayTimer = setTimeout(function () { slideIn(s, t); }, 300);
   }
 
   function label(s) { el.t.textContent = s; el.w.textContent = s; }
@@ -137,17 +149,23 @@
       }
     } else {
       label(Math.round(shown) + '%');
-      say(STAGES[idx(shown)][1]);
+      say(STAGES[stageShown][1]);
     }
   }
 
-  function loop() {
+   function loop() {
     raf = 0;
-    if (shown < target) {
-      shown = Math.min(target, shown + Math.max(0.35, (target - shown) * 0.2));
-      render();
-      raf = requestAnimationFrame(loop);
+    var now = performance.now(), last = STAGES.length - 1;
+    var waited = now - stageAt >= DWELL;
+    var limit = stageShown < last ? STAGES[stageShown + 1][0] - 0.5 : (waited ? 100 : 99);
+    var goal = Math.min(target, limit);
+    if (shown < goal) shown = Math.min(goal, shown + Math.max(0.35, (goal - shown) * 0.2));
+    if (stageShown < last && waited && shown >= limit - 0.01 && target >= STAGES[stageShown + 1][0]) {
+      stageShown++; stageAt = now;
     }
+    render();
+    var more = shown < target || (stageShown < last && target >= STAGES[stageShown + 1][0]);
+    if (more) raf = requestAnimationFrame(loop);
   }
 
   function kick() { if (!raf) raf = requestAnimationFrame(loop); }
@@ -205,8 +223,10 @@
       stopAll();
       cb = null; fired = false; finishing = false; lastText = '';
       if (!root && !mount()) { active = false; return; }
-      active = true;
+       active = true;
       target = 3; shown = 0;
+      stageShown = 0; stageAt = performance.now();
+      clearTimeout(sayTimer); el.stage.textContent = ''; el.stage.className = 'pp-stage';
       root.setAttribute('data-state', 'loading');
       render();
       kick();
@@ -233,7 +253,7 @@
     },
     reason: function () {
       if (root && root.getAttribute('data-state') === 'fail') return FAIL_REASON;
-      return STAGES[idx(shown)][2];
+            return STAGES[stageShown][2];
     },
     reveal: reveal,
     swap: swap
