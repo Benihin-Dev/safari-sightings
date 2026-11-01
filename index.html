@@ -3022,7 +3022,7 @@ function setHeading(state) {
     w.textContent = 'ready.';
   }
 }
-}
+
 function explainNotReady() {
   if (!navigator.onLine) { popup('No signal right now', 'Your report needs a connection to finish. Try again when signal is back.', 'OK'); return; }
   const why = window.PdfProgress ? PdfProgress.reason() : 'Your report is still being prepared.';
