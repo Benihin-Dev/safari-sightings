@@ -3056,7 +3056,7 @@ const showReady = async () => {
   const wait = ms => new Promise(r => setTimeout(r, ms));
   if (myRun !== runId) return;
   setHeading('ready');                    /* step 1: heading slides to "ready" */
-  await wait(500);
+  await wait(900);
   if (myRun !== runId) return;
   $('dsum').textContent = readyMsg;       /* step 2: sightings message slides in */
   if (window.PdfProgress) PdfProgress.reveal($('dsum')); else $('dsum').hidden = false;
