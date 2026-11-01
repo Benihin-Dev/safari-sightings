@@ -9,6 +9,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="pdf-progress.js" defer></script>
 <style>
 /* ===== PART 1: LOGIN STYLES ===== */
     * {
@@ -1292,6 +1293,9 @@
 #fab{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:18px;z-index:30;;display:flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:99px;background:#C9923A;color:#12372B;font:700 14px -apple-system,Segoe UI,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.4);cursor:pointer;animation:rise .4s both}
 #fab[hidden]{display:none}
 
+.ac .pr{transition:opacity .6s ease}
+.ac .pr.off{opacity:.45}
+
 /* ===== TICK ANIMATIONS ===== */
 .cd{position:relative;overflow:hidden;transition:border-color .25s,background .25s,box-shadow .25s,transform .15s}
 .cd:active{transform:scale(.98)}
@@ -1501,9 +1505,11 @@
 <button class="so" id="so">Not you? Start over with new details</button>
 <div class="sob" id="sob" hidden>This clears the ticks on this phone and returns to the login page. <I>Continue</I>?<div><button id="sy" class="y">Continue</button><button id="sn">Cancel</button></div></div>
 </div>
-<div id="done" class="dn" hidden><div class="ty"><div class="ty-logo"><img alt="Jastan logo" src="data:image/png;base64,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"></div><div class="ty-h">Thank you</div><div class="ty-n" id="tyn"></div><div class="ty-p" id="typ"></div><div class="ty-d" id="tyd"></div></div><div class="ok"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div><h4>What a safari! Your wildlife report is ready.</h4><p id="dsum"></p>
-<div class="ac"><button class="pr" id="dl"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download PDF</button><button id="back"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Back to sightings</button></div>
-<div id="after" hidden><div class="nt" id="dlnote" hidden>Your PDF is saved to this phone.<br>You can read it anytime.</div>
+<div id="done" class="dn" hidden><div class="ty"><div class="ty-logo"><img alt="Jastan logo" src="data:image/png;base64,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"></div><div class="ty-h">Thank you</div><div class="ty-n" id="tyn"></div><div class="ty-p" id="typ"></div><div class="ty-d" id="tyd"></div></div><div id="pdfProgress"><div class="ok"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div></div>
+<h4 id="thx">What a safari! Your wildlife report is ready.</h4><p id="dsum" hidden></p>
+<div class="ac"><button class="pr off" id="dl"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download PDF</button><button id="back"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Back to sightings</button></div>
+<div id="after" hidden>
+<div class="nt" id="dlnote" hidden>Your PDF is saved to this phone.<br>You can read it anytime.</div>
 <button class="fbk" id="fb"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.5 7.2L3 21l1.8-6.5A8 8 0 1 1 21 12z"/></svg>Give feedback</button><div class="nt2" id="fbm"></div></div>
 <div class="nt2" id="mailnote" style="margin-top:12px"></div></div>
 </div></section>
@@ -1650,6 +1656,8 @@ async function img(u) {
 /* ============================================================
    BUILD PDF
    ============================================================ */
+const P = p => { if (window.PdfProgress) PdfProgress.set(p); };
+const breathe = () => new Promise(r => setTimeout(r, 0));
 
 async function buildReport(g, sp) {
 
@@ -1660,6 +1668,20 @@ async function buildReport(g, sp) {
     });
 
     const W = 210;
+    const urls = [...new Set(sp.flatMap(s => [s['Male photo link'], s['Female photo link']]).filter(Boolean))];
+    const pics = {};
+    let next = 0, loaded = 0;
+    P(8); await breathe();
+    await Promise.all(Array.from({ length: 4 }, async () => {
+        while (next < urls.length) {
+            const u = urls[next++];
+            pics[u] = await img(u);
+            loaded++; P(10 + 70 * loaded / urls.length);
+        }
+    }));
+    P(82);
+    const total = Math.max(1, sp.filter(s => !s.extra).length);
+    let drawn = 0;
 
 
     /* ---------- DATE ---------- */
@@ -2162,15 +2184,6 @@ async function buildReport(g, sp) {
        SPECIES
        ======================================================== */
 
-    const urls = [...new Set(sp.flatMap(s => [s['Male photo link'], s['Female photo link']]).filter(Boolean))];
-    const pics = {};
-    let next = 0;
-    await Promise.all(Array.from({ length: 4 }, async () => {
-        while (next < urls.length) {
-            const u = urls[next++];
-            pics[u] = await img(u);
-        }
-    }));
 
     let y = 157;
 
@@ -2455,6 +2468,8 @@ async function buildReport(g, sp) {
 
 
             y += 90;
+            drawn++; P(82 + 14 * drawn / total);
+            if (drawn % 3 === 0) await breathe();
 
         }
 
@@ -2975,7 +2990,20 @@ function popup(title, text, yesLabel, noLabel, onYes) {
   $('ppy').onclick = () => { $('pp').classList.remove('show'); if (onYes) onYes(); };
   $('ppn').onclick = () => { $('pp').classList.remove('show'); };
 }
-  
+let reportReady = false, runId = 0;
+function setHeading(state) {
+  const html = state === 'prep'
+    ? 'What a safari! Your wildlife report is preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>'
+    : state === 'fail' ? 'What a safari! Your wildlife report is not ready yet.'
+    : 'What a safari! Your wildlife report is ready.';
+  if (window.PdfProgress) PdfProgress.swap($('thx'), html); else $('thx').innerHTML = html;
+}
+function explainNotReady() {
+  if (!navigator.onLine) { popup('No signal right now', 'Your report needs a connection to finish. Try again when signal is back.', 'OK'); return; }
+  const why = window.PdfProgress ? PdfProgress.reason() : 'Your report is still being prepared.';
+  popup('Report not ready yet', why + ' Download PDF unlocks as soon as it is ready.', 'OK');
+}  
+
 $('sgo').onclick = () => {
     const n = total();
     if (!n) { $('gm').textContent = 'Tick at least one sighting first'; return; }
@@ -2989,7 +3017,11 @@ $('yes').onclick = async () => {
     queueSightings();
     $('tkB').hidden = true; $('tkA').hidden = false; $('tk').classList.remove('confirm');
     $('main').hidden = true; $('done').hidden = false; $('tyn').textContent = G.name; $('typ').textContent = G.parkLabel; $('tyd').textContent = fmt(G.date).toUpperCase(); document.querySelector('#sight .hd').style.display = 'none';$('after').hidden = true; $('dlnote').hidden = true; $('fbm').textContent = ''; $('fab').hidden = true;
-    $('dsum').innerHTML = 'Preparing your report<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>'; $('dl').disabled = true;
+        const myRun = ++runId;
+    $('dsum').textContent = ''; $('dsum').hidden = true;
+    $('dl').classList.add('off'); reportReady = false;
+    $('thx').innerHTML = 'What a safari! Your wildlife report is preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
+    if (window.PdfProgress) PdfProgress.start();
 $('mailnote').textContent = G.email
   ? 'Your report will be emailed to you shortly.'
   : 'As you did not enter an email address, we are unable to send you an emailed copy of this PDF. Please use the Download PDF button above to save your report.';
@@ -3000,11 +3032,24 @@ $('mailnote').textContent = G.email
       doc = await window.buildReport({ name: G.name, email: G.email, park: G.parkLabel, date: G.date }, rows);
 if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are missing in this copy. When you have signal, tap Download PDF again to get the full version.';
 if (window.missingPics) popup('Some pictures are missing', 'Some pictures could not be saved on this phone, so they are missing from this copy.' + (G.email ? ' The copy emailed to you will be complete.' : '') + ' When you have signal, tap Download PDF again to get the full version.', 'OK');    
-$('dsum').textContent = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Every moment from your safari journey is turning into a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
-      $('dl').disabled = false;
-$('after').hidden = false;
+if (myRun !== runId) return;
+const readyMsg = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Every moment from your safari journey is turning into a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
+const showReady = () => {
+  if (myRun !== runId) return;
+  reportReady = true;
+  $('dl').classList.remove('off');
+  setHeading('ready');
+  $('dsum').textContent = readyMsg;
+  if (window.PdfProgress) { PdfProgress.reveal($('dsum')); PdfProgress.reveal($('after')); }
+  else { $('dsum').hidden = false; $('after').hidden = false; }
+};
+if (window.PdfProgress) PdfProgress.finish(showReady); else showReady();
       flush();
     } catch (err) {
+      if (myRun !== runId) return;
+      if (window.PdfProgress) PdfProgress.fail();
+      reportReady = false; setHeading('fail'); $('dsum').hidden = false;
+
       console.error(err);
       $('dsum').textContent = 'Sorry, the report could not be created. Tap Back to sightings and try again.';
 popup('Report not ready', 'We could not prepare your report. Please go to an area with coverage and try again.', 'Try again', 'Close', () => $('yes').onclick());
@@ -3033,6 +3078,7 @@ async function saveNow(name) {
   }
 }
 $('dl').onclick = async () => {
+  if (!reportReady) { explainNotReady(); return; }
   if (!doc) return;
   let rebuilt = false;
   if (window.missingPics && navigator.onLine) {
