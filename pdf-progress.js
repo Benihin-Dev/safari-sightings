@@ -49,9 +49,8 @@
 '.pp-stage.out{opacity:0;transform:translateY(-10px)}' +
 '.pp-stage.pre{opacity:0;transform:translateY(12px);transition:none}' +
 '.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;min-height:0;margin-top:0}' +
-    '.pp-wrap[data-state=done] .pp-ring{animation:ppglow 1.8s ease-out}' +
-'.pp-wrap[data-state=done]{overflow:hidden;animation:ppgone .5s ease .9s both}' +
-'@keyframes ppgone{from{opacity:1;max-height:140px;transform:scale(1)}to{opacity:0;max-height:0;margin-bottom:0;transform:scale(.8)}}' +
+'.pp-wrap[data-state=done] .pp-doc{animation:pppop 1.1s cubic-bezier(.3,.8,.3,1)}' +
+'@keyframes pppop{0%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,146,58,0)}45%{transform:scale(1.4) translateY(-5px);box-shadow:0 0 16px 5px rgba(201,146,58,.6)}100%{transform:scale(1);box-shadow:0 0 0 0 rgba(201,146,58,0)}}' +
     '.pp-wrap[data-state=fail] .pp-fill{stroke:#B3261E;filter:none}' +
     '.pp-wrap[data-state=fail] .pp-stage{color:#B3261E}' +
     '@keyframes ppfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}' +
@@ -204,15 +203,15 @@
     }, 260);
   }
 
-   function reveal(node) {
+function reveal(node, dy) {
   if (!node) return;
   node.hidden = false;
   if (reduced()) return;
   node.style.transition = 'none';
   node.style.opacity = '0';
-  node.style.transform = 'translateY(12px)';
+  node.style.transform = 'translateY(' + (dy == null ? 16 : dy) + 'px)';
   void node.offsetHeight;
-  node.style.transition = 'opacity .5s ease, transform .5s ease';
+  node.style.transition = 'opacity .8s ease, transform .8s cubic-bezier(.2,.8,.3,1)';
   node.style.opacity = '1';
   node.style.transform = 'translateY(0)';
 }
