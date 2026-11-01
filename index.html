@@ -1280,6 +1280,10 @@
     
 /* ===== EXTRA POLISH ===== */
 
+#thw span{display:inline-block;transition:filter .7s ease}
+#thw.wavy span{filter:blur(2.5px);animation:ready-wave 1.2s ease-in-out infinite;animation-delay:calc(var(--i) * -.12s)}
+@keyframes ready-wave{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+
 .in-sight .hero,.in-sight .foot{display:none}
 .in-sight{padding-top:22px}
 #sight{margin-top:0;animation:rise .7s cubic-bezier(.16,1,.3,1) both}
@@ -2998,23 +3002,20 @@ let reportReady = false, runId = 0;
 const HEAD = 'What a safari! Your wildlife report is ';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let typeId = 0;
-async function setHeading(state) {
+function setHeading(state) {
   let w = $('thw');
   if (!w) { $('thx').innerHTML = HEAD + '<span id="thw"></span>'; w = $('thw'); }
+  if (state === 'fail') { w.className = ''; w.textContent = 'not ready yet.'; return; }
   if (state === 'prep') {
-    typeId++;
-    w.classList.remove('caret');
-    w.innerHTML = 'preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
+    w.className = '';
+    w.innerHTML = 'ready.'.split('').map((ch, i) => '<span style="--i:' + i + '">' + ch + '</span>').join('');
+    void w.offsetWidth;
+    w.className = 'wavy';
     return;
   }
-  const to = state === 'fail' ? 'not ready yet.' : 'ready.';
-  if (calm()) { w.textContent = to; return; }
-  const id = ++typeId;
-  let cur = w.textContent;
-  w.classList.add('caret');
-  while (cur.length && id === typeId) { cur = cur.slice(0, -1); w.textContent = cur; await sleep(45); }
-  for (let i = 1; i <= to.length && id === typeId; i++) { w.textContent = to.slice(0, i); await sleep(75); }
-  if (id === typeId) w.classList.remove('caret');
+  /* ready: letters settle into clear, normal text */
+  if (w.textContent !== 'ready.') w.textContent = 'ready.';
+  w.className = '';
 }
 function explainNotReady() {
   if (!navigator.onLine) { popup('No signal right now', 'Your report needs a connection to finish. Try again when signal is back.', 'OK'); return; }
