@@ -3014,8 +3014,14 @@ function setHeading(state) {
     return;
   }
   /* ready: letters settle into clear, normal text */
-  if (w.textContent !== 'ready.') w.textContent = 'ready.';
-  w.className = '';
+  /* ready: blur clears gently, then it becomes normal text */
+  if (w.classList.contains('wavy')) {
+    w.classList.remove('wavy');
+    setTimeout(() => { if (!w.classList.contains('wavy')) w.textContent = 'ready.'; }, 750);
+  } else if (w.textContent !== 'ready.') {
+    w.textContent = 'ready.';
+  }
+}
 }
 function explainNotReady() {
   if (!navigator.onLine) { popup('No signal right now', 'Your report needs a connection to finish. Try again when signal is back.', 'OK'); return; }
