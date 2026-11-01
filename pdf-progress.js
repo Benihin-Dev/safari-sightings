@@ -45,12 +45,12 @@
     '.pp-doc i{position:relative;z-index:1;display:block;height:2.5px;border-radius:2px;background:rgba(30,77,58,.3)}' +
     '.pp-doc i.s{width:60%}' +
     '.pp-doc::after{content:"";position:absolute;top:0;right:0;z-index:2;border-top:8px solid var(--pp-paper);border-left:8px solid rgba(30,77,58,.28)}' +
-    '.pp-stage{margin-top:10px;max-height:20px;overflow:hidden;text-align:center;font:italic 13px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);transition:opacity .5s ease,max-height .6s ease .1s,margin .6s ease .1s;animation:ppfade .5s ease}' +
+    '.pp-stage{margin-top:6px;max-height:18px;overflow:hidden;text-align:center;font:italic 13px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);transition:opacity .4s ease,max-height .5s ease .3s,margin-top .5s ease .3s;animation:ppfade .5s ease}' +
     '.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;margin-top:0}' +
     '.pp-wrap[data-state=done] .pp-ring{animation:ppglow 1.8s ease-out}' +
     '.pp-wrap[data-state=fail] .pp-fill{stroke:#B3261E;filter:none}' +
     '.pp-wrap[data-state=fail] .pp-stage{color:#B3261E}' +
-    '@keyframes ppfade{from{opacity:0}to{opacity:1}}' +
+    '@keyframes ppfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}' +
     '@keyframes ppglow{0%{box-shadow:0 0 0 0 rgba(201,146,58,0)}40%{box-shadow:0 0 20px 5px rgba(201,146,58,.55)}100%{box-shadow:0 0 0 0 rgba(201,146,58,0)}}' +
     '@media (prefers-reduced-motion:reduce){.pp-wrap,.pp-wrap *{animation:none!important;transition:none!important}}';
 
@@ -131,7 +131,7 @@
       root.setAttribute('data-state', 'done');
       if (!fired) {
         fired = true;
-        timer = setTimeout(function () { if (cb) { var f = cb; cb = null; f(); } }, 450);
+        timer = setTimeout(function () { if (cb) { var f = cb; cb = null; f(); } }, 900);
       }
     } else {
       label(Math.round(shown) + '%');
@@ -156,25 +156,21 @@
   }
 
   /* ---- Smooth helpers for other parts of the card ---- */
-  function reveal(node) {
+  function swap(node, html) {
     if (!node) return;
-    node.hidden = false;
-    if (reduced()) return;
-    var h = node.scrollHeight, mt = getComputedStyle(node).marginTop;
-    node.style.overflow = 'hidden';
-    node.style.height = '0px';
+    if (reduced()) { node.innerHTML = html; return; }
+    node.style.transition = 'opacity .35s ease, transform .35s ease';
     node.style.opacity = '0';
-    node.style.marginTop = '0px';
-    node.style.transition = 'height .6s ease, opacity .6s ease, margin-top .6s ease';
-    void node.offsetHeight;
-    requestAnimationFrame(function () {
-      node.style.height = h + 'px';
-      node.style.opacity = '1';
-      node.style.marginTop = mt;
-    });
+    node.style.transform = 'translateY(-8px)';
     setTimeout(function () {
-      ['overflow', 'height', 'opacity', 'marginTop', 'transition'].forEach(function (k) { node.style[k] = ''; });
-    }, 700);
+      node.innerHTML = html;
+      node.style.transition = 'none';
+      node.style.transform = 'translateY(8px)';
+      void node.offsetHeight;
+      node.style.transition = 'opacity .45s ease, transform .45s ease';
+      node.style.opacity = '1';
+      node.style.transform = 'translateY(0)';
+    }, 360);
   }
 
   function swap(node, html) {
