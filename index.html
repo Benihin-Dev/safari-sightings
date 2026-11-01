@@ -1357,10 +1357,6 @@
 #em .cfr{display:flex;gap:10px}
 #em button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
 #em button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
-
-#thw.caret{border-right:2px solid #C9923A;padding-right:2px;animation:caretblink .7s steps(1) infinite}
-@keyframes caretblink{50%{border-color:transparent}}
-
 /* ===== PREPARING DOTS ===== */
 .dots i{font-style:normal;display:inline-block;opacity:.15}
 .dots i:nth-child(1){animation:dot1 1.8s infinite}
@@ -2995,26 +2991,12 @@ function popup(title, text, yesLabel, noLabel, onYes) {
   $('ppn').onclick = () => { $('pp').classList.remove('show'); };
 }
 let reportReady = false, runId = 0;
-const HEAD = 'What a safari! Your wildlife report is ';
-const sleep = ms => new Promise(r => setTimeout(r, ms));
-let typeId = 0;
-async function setHeading(state) {
-  let w = $('thw');
-  if (!w) { $('thx').innerHTML = HEAD + '<span id="thw"></span>'; w = $('thw'); }
-  if (state === 'prep') {
-    typeId++;
-    w.classList.remove('caret');
-    w.innerHTML = 'preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
-    return;
-  }
-  const to = state === 'fail' ? 'not ready yet.' : 'ready.';
-  if (calm()) { w.textContent = to; return; }
-  const id = ++typeId;
-  let cur = w.textContent;
-  w.classList.add('caret');
-  while (cur.length && id === typeId) { cur = cur.slice(0, -1); w.textContent = cur; await sleep(45); }
-  for (let i = 1; i <= to.length && id === typeId; i++) { w.textContent = to.slice(0, i); await sleep(75); }
-  if (id === typeId) w.classList.remove('caret');
+function setHeading(state) {
+  const html = state === 'prep'
+    ? 'What a safari! Your wildlife report is preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>'
+    : state === 'fail' ? 'What a safari! Your wildlife report is not ready yet.'
+    : 'What a safari! Your wildlife report is ready.';
+  if (window.PdfProgress) PdfProgress.swap($('thx'), html); else $('thx').innerHTML = html;
 }
 function explainNotReady() {
   if (!navigator.onLine) { popup('No signal right now', 'Your report needs a connection to finish. Try again when signal is back.', 'OK'); return; }
@@ -3038,7 +3020,7 @@ $('yes').onclick = async () => {
         const myRun = ++runId;
     $('dsum').textContent = ''; $('dsum').hidden = true;
     $('dl').classList.add('off'); reportReady = false;
-        $('thx').innerHTML = HEAD + '<span id="thw"></span>'; setHeading('prep');
+    $('thx').innerHTML = 'What a safari! Your wildlife report is preparing<span class="dots" aria-hidden="true"><i>.</i><i>.</i><i>.</i></span>';
     if (window.PdfProgress) PdfProgress.start();
 $('mailnote').textContent = G.email
   ? 'Your report will be emailed to you shortly.'
@@ -3056,7 +3038,7 @@ const showReady = async () => {
   const wait = ms => new Promise(r => setTimeout(r, ms));
   if (myRun !== runId) return;
   setHeading('ready');                    /* step 1: heading slides to "ready" */
-  await wait(500);
+  await wait(900);
   if (myRun !== runId) return;
   $('dsum').textContent = readyMsg;       /* step 2: sightings message slides in */
   if (window.PdfProgress) PdfProgress.reveal($('dsum')); else $('dsum').hidden = false;
