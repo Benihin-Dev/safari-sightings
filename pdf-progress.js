@@ -55,7 +55,7 @@
     '.pp-wrap[data-state=fail] .pp-stage{color:#B3261E}' +
     '@keyframes ppfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}' +
     '@keyframes ppglow{0%{box-shadow:0 0 0 0 rgba(201,146,58,0)}40%{box-shadow:0 0 20px 5px rgba(201,146,58,.55)}100%{box-shadow:0 0 0 0 rgba(201,146,58,0)}}' +
-    '@media (prefers-reduced-motion:reduce){.pp-wrap,.pp-wrap *{animation:none!important;transition:none!important}.pp-wrap[data-state=done]{display:none}}';
+'@media (prefers-reduced-motion:reduce){.pp-wrap,.pp-wrap *{animation:none!important;transition:none!important}}';
 
   var HTML =
     '<div class="pp-wrap" data-state="loading" role="progressbar" aria-label="Preparing your safari report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
