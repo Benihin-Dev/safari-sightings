@@ -48,11 +48,13 @@
     '.pp-stage{margin-top:6px;max-height:18px;overflow:hidden;text-align:center;font:italic 13px "Times New Roman",Times,Georgia,serif;letter-spacing:.02em;color:var(--pp-note);transition:opacity .4s ease,max-height .5s ease .3s,margin-top .5s ease .3s;animation:ppfade .5s ease}' +
     '.pp-wrap[data-state=done] .pp-stage{opacity:0;max-height:0;margin-top:0}' +
     '.pp-wrap[data-state=done] .pp-ring{animation:ppglow 1.8s ease-out}' +
+'.pp-wrap[data-state=done]{animation:ppgone .5s ease .9s both}' +
+'@keyframes ppgone{from{opacity:1;max-height:140px;transform:scale(1)}to{opacity:0;max-height:0;margin-bottom:0;transform:scale(.8)}}' +
     '.pp-wrap[data-state=fail] .pp-fill{stroke:#B3261E;filter:none}' +
     '.pp-wrap[data-state=fail] .pp-stage{color:#B3261E}' +
     '@keyframes ppfade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}' +
     '@keyframes ppglow{0%{box-shadow:0 0 0 0 rgba(201,146,58,0)}40%{box-shadow:0 0 20px 5px rgba(201,146,58,.55)}100%{box-shadow:0 0 0 0 rgba(201,146,58,0)}}' +
-    '@media (prefers-reduced-motion:reduce){.pp-wrap,.pp-wrap *{animation:none!important;transition:none!important}}';
+    '@media (prefers-reduced-motion:reduce){.pp-wrap,.pp-wrap *{animation:none!important;transition:none!important}.pp-wrap[data-state=done]{display:none}}';
 
   var HTML =
     '<div class="pp-wrap" data-state="loading" role="progressbar" aria-label="Preparing your safari report" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">' +
@@ -184,6 +186,19 @@
     }, 260);
   }
 
+   function reveal(node) {
+  if (!node) return;
+  node.hidden = false;
+  if (reduced()) return;
+  node.style.transition = 'none';
+  node.style.opacity = '0';
+  node.style.transform = 'translateY(12px)';
+  void node.offsetHeight;
+  node.style.transition = 'opacity .5s ease, transform .5s ease';
+  node.style.opacity = '1';
+  node.style.transform = 'translateY(0)';
+}
+   
   window.PdfProgress = {
     mount: mount,
     start: function () {
