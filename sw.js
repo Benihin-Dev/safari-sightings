@@ -10,6 +10,7 @@ self.addEventListener('install', e => {
     const c = await caches.open(CACHE);
     await Promise.allSettled([
       c.add('./index.html'),
+      c.add('./pdf-progress.js'),
       c.add(JSPDF),
       (async () => {
         const css = await fetch(FONTS);
