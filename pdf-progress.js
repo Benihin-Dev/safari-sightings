@@ -207,13 +207,36 @@ function reveal(node, dy) {
   if (!node) return;
   node.hidden = false;
   if (reduced()) return;
+
+  // measure the real size first (overflow hidden so child margins are counted)
   node.style.transition = 'none';
+  node.style.overflow = 'hidden';
+  node.style.height = 'auto';
+  var h = node.scrollHeight;
+  var mt = getComputedStyle(node).marginTop;
+
+  // start collapsed
+  node.style.height = '0px';
+  node.style.marginTop = '0px';
   node.style.opacity = '0';
   node.style.transform = 'translateY(' + (dy == null ? 16 : dy) + 'px)';
   void node.offsetHeight;
-  node.style.transition = 'opacity .8s ease, transform .8s cubic-bezier(.2,.8,.3,1)';
+
+  // grow smoothly together with the fade
+  var ease = '.8s cubic-bezier(.2,.8,.3,1)';
+  node.style.transition = 'height ' + ease + ', margin-top ' + ease + ', transform ' + ease + ', opacity .8s ease';
+  node.style.height = h + 'px';
+  node.style.marginTop = mt;
   node.style.opacity = '1';
   node.style.transform = 'translateY(0)';
+
+  // clean up so later content changes can resize normally
+  setTimeout(function () {
+    node.style.height = '';
+    node.style.overflow = '';
+    node.style.marginTop = '';
+    node.style.transition = '';
+  }, 900);
 }
    
   window.PdfProgress = {
