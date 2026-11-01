@@ -3034,15 +3034,23 @@ if (window.missingPics) $('mailnote').innerHTML += '<br><br>Some pictures are mi
 if (window.missingPics) popup('Some pictures are missing', 'Some pictures could not be saved on this phone, so they are missing from this copy.' + (G.email ? ' The copy emailed to you will be complete.' : '') + ' When you have signal, tap Download PDF again to get the full version.', 'OK');    
 if (myRun !== runId) return;
 const readyMsg = n + ' sighting' + (n > 1 ? 's' : '') + ' logged! Every moment of your safari becomes a memory to treasure.' + (CONFIG.API.startsWith('PASTE') ? ' Test mode: no email was sent.' : '');
-const showReady = () => {
+const showReady = async () => {
+  const wait = ms => new Promise(r => setTimeout(r, ms));
   if (myRun !== runId) return;
-  reportReady = true;
+  setHeading('ready');                    /* step 1: heading slides to "ready" */
+  await wait(900);
+  if (myRun !== runId) return;
+  $('dsum').textContent = readyMsg;       /* step 2: sightings message slides in */
+  if (window.PdfProgress) PdfProgress.reveal($('dsum')); else $('dsum').hidden = false;
+  await wait(800);
+  if (myRun !== runId) return;
+  reportReady = true;                     /* step 3: Download button becomes bright */
   $('dl').classList.remove('off');
-  setHeading('ready');
-  $('dsum').textContent = readyMsg;
-  if (window.PdfProgress) { PdfProgress.reveal($('dsum')); PdfProgress.reveal($('after')); }
-  else { $('dsum').hidden = false; $('after').hidden = false; }
+  await wait(600);
+  if (myRun !== runId) return;
+  if (window.PdfProgress) PdfProgress.reveal($('after')); else $('after').hidden = false;  /* step 4: feedback */
 };
+
 if (window.PdfProgress) PdfProgress.finish(showReady); else showReady();
       flush();
     } catch (err) {
