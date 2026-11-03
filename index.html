@@ -11,6 +11,20 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="pdf-progress.js" defer></script>
 <style>
+
+/* ===== Website Preloader ===== */
+
+#preloader{position:fixed;inset:0;background:radial-gradient(circle at 50% 40%,#1b4630,#0f2a1c 70%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;z-index:9999;transition:opacity .7s ease,visibility .7s ease}
+#preloader.hide{opacity:0;visibility:hidden}
+.logo-wrap{position:relative;width:160px;height:160px;display:flex;align-items:center;justify-content:center}
+.logo-wrap img{width:106px;height:106px;object-fit:contain;animation:pulse 2s ease-in-out infinite}
+.ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(from 0deg,transparent 0deg,rgba(224,160,48,.12) 110deg,#e0a030 330deg,#ffd98a 360deg);-webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));mask:radial-gradient(farthest-side,transparent calc(100% - 5px),#000 calc(100% - 4px));filter:drop-shadow(0 0 8px rgba(224,160,48,.55));animation:spin 1.6s linear infinite}
+.glow{position:absolute;inset:26px;border-radius:50%;background:radial-gradient(circle,rgba(224,160,48,.3),transparent 70%);animation:pulse 2s ease-in-out infinite}
+.name{color:#f4ecd8;letter-spacing:.32em;font-size:14px;text-transform:uppercase;font-family:Georgia,serif;animation:fade 2s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes pulse{50%{transform:scale(1.08)}}
+@keyframes fade{50%{opacity:.45}} 
+
 /* ===== PART 1: LOGIN STYLES ===== */
     * {
       box-sizing: border-box;
@@ -1388,6 +1402,15 @@
 </style>
 </head>
 <body>
+
+<div id="preloader">
+  <div class="logo-wrap">
+    <div class="glow"></div>
+    <div class="ring"></div>
+    <img src="logo.png" alt="Wild Sighting Log">
+  </div>
+  <div class="name">Your Safari Name</div>
+</div>
 
   <div class="scene">
     <div class="bird" style="top:12%; animation-delay:-4s;">
@@ -3354,5 +3377,13 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
 <div id="pp"><div class="cfb"><h4 id="pph"></h4><p id="ppt"></p><div class="cfr"><button id="ppn" type="button"></button><button id="ppy" type="button" class="y"></button></div></div></div>
 <div id="cf"><div class="cfb"><h4>Remove this sighting?</h4><p id="cft"></p><div class="cfr"><button id="cfn" type="button">Keep it</button><button id="cfy" type="button" class="y">Yes, remove</button></div></div></div>
 <div id="em"><div class="cfb"><h4>No email address entered</h4><p>Without an email address, a copy of your sightings report will not be sent to you by email. You can still download your PDF at the end of your safari.</p><div class="cfr"><button id="emc" type="button" class="y">Continue without email</button><button id="ema" type="button">Add email</button></div></div></div>
+
+<script>
+  window.addEventListener("load", function () {
+    setTimeout(function () {
+      document.getElementById("preloader").classList.add("hide");
+    }, 1500);
+  });
+</script>
 </body>
 </html>
