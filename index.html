@@ -1399,6 +1399,12 @@
 #pp button{flex:1;padding:12px 8px;border-radius:14px;font:700 14px -apple-system,Segoe UI,sans-serif;cursor:pointer;border:1.5px solid #E6E9E7;background:#fff;color:#1E4D3A}
 #pp button.y{background:#1E4D3A;color:#fff;border-color:#1E4D3A}
 
+/* ===== PDF circle message ===== */
+.dn{position:relative}
+#pdfMsg{position:absolute;left:0;top:0;transform:translate(-50%,-100%);background:rgba(90,90,90,.6);color:#fff;font:500 12px -apple-system,"Segoe UI",sans-serif;padding:6px 12px;border-radius:8px;white-space:nowrap;opacity:0;pointer-events:none;z-index:6}
+#pdfMsg.show{animation:msgfade 2s ease-in-out forwards}
+@keyframes msgfade{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
+
 </style>
 </head>
 <body>
@@ -3384,6 +3390,24 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
       document.getElementById("preloader").classList.add("hide");
     }, 1500);
   });
+</script>
+
+<script>
+(function(){
+  var pp=document.getElementById("pdfProgress"), dn=document.getElementById("done");
+  if(!pp||!dn) return;
+  var msg=document.createElement("div");
+  msg.id="pdfMsg"; msg.textContent="Please click the Download PDF button";
+  dn.appendChild(msg);
+  pp.addEventListener("click",function(e){
+    var c=pp.firstElementChild||pp, r=c.getBoundingClientRect();
+    if(e.clientX<r.left||e.clientX>r.right||e.clientY<r.top||e.clientY>r.bottom) return;
+    var d=dn.getBoundingClientRect();
+    msg.style.left=(r.left+r.width/2-d.left-dn.clientLeft)+"px";
+    msg.style.top=(r.top-d.top-dn.clientTop-8)+"px";
+    msg.classList.remove("show"); void msg.offsetWidth; msg.classList.add("show");
+  });
+})();
 </script>
 </body>
 </html>
