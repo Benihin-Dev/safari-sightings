@@ -111,7 +111,7 @@
       z-index: 2;
       max-width: 480px;
       margin: 0 auto;
-      padding: 48px 20px 48px;
+      padding: 45px 20px 45px;
     }
 
     .hero {
@@ -149,7 +149,7 @@
       margin-top: 28px;
       background: rgba(255, 255, 255, 0.98);
       border-radius: 20px;
-      padding: 45px 24px 28px 24px;
+      padding: 48px 24px 28px 24px;
       animation: rise 0.8s 0.15s cubic-bezier(0.16, 1, 0.3, 1) both;
       box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.2);
     }
@@ -1162,6 +1162,8 @@
             width: auto;
             display: block;
         }
+a.ty-logo{text-decoration:none;cursor:pointer;-webkit-tap-highlight-color:transparent;transition:transform .15s}
+a.ty-logo:active{transform:scale(.95)}
 
         .ty-h {
             font-family: 'DM Serif Display', Georgia, serif;
@@ -1308,7 +1310,7 @@
 .prog i{display:block;height:100%;width:0;background:linear-gradient(90deg,#F2D27A,#7CE0A0);border-radius:9px;transition:width .4s}
 .pp{background-size:cover;background-position:center}
 .hd{background-image:radial-gradient(circle at 92% 0,rgba(242,210,122,.28),transparent 55%)}
-#fab{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:18px;z-index:30;;display:flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:99px;background:#C9923A;color:#12372B;font:700 14px -apple-system,Segoe UI,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.4);cursor:pointer;animation:rise .4s both}
+#fab{position:fixed;left:0;right:0;margin:0 auto;width:max-content;bottom:18px;z-index:30;display:flex;align-items:center;gap:8px;padding:12px 20px;border:0;border-radius:99px;background:#C9923A;color:#12372B;font:700 14px -apple-system,Segoe UI,sans-serif;box-shadow:0 8px 22px rgba(0,0,0,.4);cursor:pointer;animation:rise .4s both}
 #fab[hidden]{display:none}
 
 .ac .pr{transition:opacity .6s ease}
@@ -1429,6 +1431,39 @@
 
 .info-btn:focus-visible,.info-x:focus-visible,.info-close:focus-visible{outline:3px solid #9FE1CB;outline-offset:2px}
 @media (prefers-reduced-motion:reduce){.info-btn,.info-x,.info-close{transition:none}}
+
+.field-wrap{display:flex;align-items:center;gap:12px;padding:0 16px;background:#F4F6F4;border:1.5px solid #E1E5E2;border-radius:12px;transition:all .2s ease}
+.field-wrap:focus-within{border-color:#1F4D3A;background:#fff;box-shadow:0 0 0 4px rgba(31,77,58,.15)}
+.field-icon{flex:none;width:20px;height:20px;color:#1F4D3A;display:flex}
+.field-icon svg{width:20px;height:20px;display:block}
+#login .field-wrap input,#login .field-wrap input:focus{flex:1;min-width:0;width:auto;padding:14px 0;background:none;border:0;border-radius:0;box-shadow:none;outline:0}
+
+/* Same green effect as the selected park card */
+.field-wrap:focus-within,
+.field-wrap:has(input:not(:placeholder-shown)),
+.date-trigger.filled{
+  background:#E8F3EE;
+  border-color:#1F4D3A;
+  box-shadow:0 4px 12px rgba(31,77,58,.15);
+}
+
+/* Autofill: remove the browser's blue and colour the whole box */
+#login .field-wrap input:-webkit-autofill,
+#login .field-wrap input:-webkit-autofill:hover,
+#login .field-wrap input:-webkit-autofill:focus,
+#login .field-wrap input:-webkit-autofill:active{
+  -webkit-text-fill-color:#1C201D;
+  caret-color:#1C201D;
+  -webkit-box-shadow:0 0 0 1000px #E8F3EE inset;
+  box-shadow:0 0 0 1000px #E8F3EE inset;
+  transition:background-color 9999s ease-out 0s;
+}
+.field-wrap:has(input:-webkit-autofill){
+  background:#E8F3EE;
+  border-color:#1F4D3A;
+}
+
+
 </style>
 
 </head>
@@ -1515,11 +1550,13 @@
       <h2>Welcome, Explorer</h2>
       <p class="sub">Provide your details to initiate your digital field checklist.</p>
 
+      <form id="loginForm" autocomplete="on" novalidate>
+
       <label for="name">Guest Name</label>
-      <input id="name" autocomplete="name" placeholder="Enter your name">
+      <div class="field-wrap"><span class="field-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4D3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></span><input id="name" name="name" type="text" autocomplete="name" placeholder="Enter your name"></div>
 
       <label for="email">Email Address <span style="font-weight:500;text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input id="email" type="email" autocomplete="email" placeholder="name@email.com">
+      <div class="field-wrap"><span class="field-icon" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F4D3A" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/><path d="M22 6l-10 7L2 6"/></svg></span><input id="email" name="email" type="email" autocomplete="email" inputmode="email" placeholder="name@email.com"></div>
 
       <label>Select Destination Park</label>
       <div class="park-grid" id="parkGrid">
@@ -1550,8 +1587,10 @@
       </div>
       <input type="hidden" id="date" value="">
 
-      <button id="go">Start Safari Session</button>
+      <button id="go" type="submit">Start Safari Session</button>
       <div id="err"></div>
+
+      </form>
 
       <div class="badge">
         <i></i>
@@ -1572,7 +1611,7 @@
 <button class="so" id="so">Not you? Start over with new details</button>
 <div class="sob" id="sob" hidden>This clears the ticks on this phone and returns to the login page. <I>Continue</I>?<div><button id="sy" class="y">Continue</button><button id="sn">Cancel</button></div></div>
 </div>
-<div id="done" class="dn" hidden><div class="ty"><div class="ty-logo"><img alt="Jastan logo" src="data:image/png;base64,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"></div><div class="ty-h">Thank you</div><div class="ty-n" id="tyn"></div><div class="ty-p" id="typ"></div><div class="ty-d" id="tyd"></div></div><div id="pdfProgress"><div class="ok"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div></div>
+<div id="done" class="dn" hidden><div class="ty"><a class="ty-logo" href="https://jastanric.vercel.app" target="_blank" rel="noopener" aria-label="Visit my website"><img alt="Jastan logo" src="logo.png"></a><div class="ty-h">Thank you</div><div class="ty-n" id="tyn"></div><div class="ty-p" id="typ"></div><div class="ty-d" id="tyd"></div></div><div id="pdfProgress"><div class="ok"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12l5 5L20 7"/></svg></div></div>
 <h4 id="thx">What a safari! Your wildlife report is ready.</h4><p id="dsum" hidden></p>
 <div class="ac"><button class="pr off" id="dl"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4v11m0 0l-4-4m4 4l4-4M5 20h14"/></svg>Download PDF</button><button id="back"><svg class="icn" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 14L4 9l5-5M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Back to sightings</button></div>
 <div id="after" hidden>
@@ -1829,14 +1868,14 @@ async function buildReport(g, sp) {
 
         doc.setTextColor(c);
 
-        doc.text(
-            String(s),
-            x,
-            y,
-            {
-                align: al || 'left'
-            }
-        );
+doc.text(
+    String(s).replace(/[^\x00-\xFF]/g, '?'),
+    x,
+    y,
+    {
+        align: al || 'left'
+    }
+);
 
     };
 
@@ -2144,12 +2183,7 @@ async function buildReport(g, sp) {
     const hit =
         FEATURED.map(
             f =>
-                names.some(
-                    n =>
-                        n.includes(
-                            f.toLowerCase()
-                        )
-                )
+names.some(n => n === f.toLowerCase())
         );
 
 
@@ -2332,16 +2366,15 @@ async function buildReport(g, sp) {
                 continue;
             }
 
-            if (y + 84 > 273) {
+if (y + 88 > 273) {
 
-                doc.addPage();
+    doc.addPage();
 
-                strip();
+    strip();
 
-                y = 26;
+    y = 26;
 
-            }
-
+}
 
             n++;
 
@@ -2498,17 +2531,14 @@ async function buildReport(g, sp) {
                 }
 
 
-                tx(
-                    s[
-                        lab +
-                        ' caption'
-                    ] || '',
-                    x,
-                    top + 67.5,
-                    8.5,
-                    'italic',
-                    '#2C2C2A'
-                );
+let cap = String(s[lab + ' caption'] || '');
+doc.setFont('helvetica', 'italic');
+doc.setFontSize(8.5);
+if (doc.getTextWidth(cap) > 84) {
+    while (cap && doc.getTextWidth(cap + '...') > 84) cap = cap.slice(0, -1);
+    cap = cap.trim() + '...';
+}
+tx(cap, x, top + 67.5, 8.5, 'italic', '#2C2C2A');
             }
 
 
@@ -2524,17 +2554,12 @@ async function buildReport(g, sp) {
             );
 
 
-            tx(
-                s['Did you know'] || '',
-                41,
-                top + 73.5,
-                8.5,
-                'normal',
-                '#2C2C2A'
-            );
+doc.setFont('helvetica', 'normal');
+doc.setFontSize(8.5);
+const dyk = doc.splitTextToSize(String(s['Did you know'] || ''), 150).slice(0, 2);
+dyk.forEach((ln, i) => tx(ln, 41, top + 73.5 + i * 4, 8.5, 'normal', '#2C2C2A'));
 
-
-            y += 90;
+y += 92;
             drawn++; P(82 + 14 * drawn / total);
             if (drawn % 3 === 0) await breathe();
 
@@ -2814,7 +2839,7 @@ async function net() {
     clearTimeout(t);
   }
   paintNet();
-    if (!was && isOn) { flush(); sendSightings(); }
+    if (!was && isOn) { sendSightings(); }
 }
 setInterval(net, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) net(); });
@@ -2876,7 +2901,7 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden) net(
   function celebrate(k) {
     if (navigator.vibrate) navigator.vibrate(18);
     const s = SP.find(x => x.ID === k), n = total(), name = s ? String(s['Common name']) : '';
-    const feat = s && CONFIG.FEATURED.some(f => name.toLowerCase().includes(f.toLowerCase()));
+const feat = s && CONFIG.FEATURED.some(f => name.toLowerCase() === f.toLowerCase());
     const hd = document.querySelector('.hd'); hd.classList.remove('flash'); void hd.offsetWidth; hd.classList.add('flash');
     if (feat) toast('Featured sighting: ' + name + '!');
     else if (n === 1) toast('First sighting! Your list has begun.');
@@ -2902,47 +2927,6 @@ async function cacheImages() {
   } catch (e) { }
 }
 
-const qdb = () => new Promise((res, rej) => {
-  const r = indexedDB.open('safariQueue', 1);
-  r.onupgradeneeded = () => r.result.createObjectStore('jobs', { keyPath: 'id' });
-  r.onsuccess = () => res(r.result);
-  r.onerror = () => rej(r.error);
-});
-const qTx = async (mode, fn) => {
-  const db = await qdb();
-  return new Promise((res, rej) => {
-    const t = db.transaction('jobs', mode);
-    const out = fn(t.objectStore('jobs'));
-    t.oncomplete = () => { db.close(); res(out && out.result); };
-    t.onerror = t.onabort = () => { db.close(); rej(t.error); };
-  });
-};
-const qPut = job => qTx('readwrite', s => s.put(job));
-const qAll = () => qTx('readonly', s => s.getAll());
-const qDel = id => qTx('readwrite', s => s.delete(id));
-const blobToB64 = b => new Promise((res, rej) => {
-  const f = new FileReader();
-  f.onload = () => res(String(f.result).split(',')[1]);
-  f.onerror = () => rej(f.error);
-  f.readAsDataURL(b);
-});
-
-let flushing = false;
-async function flush() {
-  if (CONFIG.API.startsWith('PASTE') || flushing) return;
-  flushing = true;
-  try {
-    const jobs = await qAll();
-    for (const j of jobs) {
-      try {
-        const body = Object.assign({ action: 'submit' }, j, { pdf: await blobToB64(j.pdf) });
-        await fetch(CONFIG.API, { method: 'POST', mode: 'no-cors', body: JSON.stringify(body) });
-        await qDel(j.id);
-      } catch (e) { }
-    }
-  } catch (e) { }
-  flushing = false;
-}
 
   /* ---- Save the ticked list to the Google Sheet when the guest finishes ---- */
   async function sendSightings() {
@@ -3136,7 +3120,6 @@ const showReady = async () => {
 };
 
 if (window.PdfProgress) PdfProgress.finish(showReady); else showReady();
-      flush();
     } catch (err) {
       if (myRun !== runId) return;
       if (window.PdfProgress) PdfProgress.fail();
@@ -3192,7 +3175,7 @@ $('dl').onclick = async () => {
   $('sy').onclick = () => { ['guest', 'sightings', 'extras'].forEach(k => localStorage.removeItem(k)); location.reload(); };
   $('fab').onclick = () => { $('tk').scrollIntoView({ behavior: 'smooth', block: 'center' }); };
   new IntersectionObserver(es => { $('fab').classList.toggle('atend', es[0].isIntersecting); }, { rootMargin: '0px 0px 40px 0px' }).observe($('tk'));
-    window.addEventListener('online', () => { net(); flush(); sendSightings(); });
+    window.addEventListener('online', () => { net(); sendSightings(); });
   window.addEventListener('offline', net);
 
   window.openSight = function () {
@@ -3200,7 +3183,7 @@ $('dl').onclick = async () => {
     $('login').hidden = true; $('sight').hidden = false;
     document.querySelector('.wrap').classList.add('in-sight');
     net(); chips(); draw(); window.scrollTo(0, 0);
-      cacheImages(); flush(); sendSightings();
+      cacheImages(); sendSightings();
   };
 })();
 
@@ -3237,6 +3220,7 @@ const $ = id => document.getElementById(id);
 
     function setDate(d) {
       selectedDate = new Date(d);
+      $('dateTrigger').classList.add('filled');
       $('date').value = formatDateForInput(selectedDate);
       $('dateDisplay').textContent = formatDateForDisplay(selectedDate);
       $('calHeaderDisplay').textContent = formatDateForDisplay(selectedDate);
@@ -3324,6 +3308,7 @@ const $ = id => document.getElementById(id);
 
     // Initialize Default Date
     setDate(new Date());
+    $('dateTrigger').classList.remove('filled');
 
     // Fireflies effect
     for (let i = 0; i < 16; i++) {
@@ -3335,7 +3320,7 @@ const $ = id => document.getElementById(id);
 
     async function loadSpecies() {
       try {
-        if (CONFIG.API.startsWith('PASTE')) { localStorage.setItem('species', JSON.stringify(SAMPLE)); return true; }
+if (CONFIG.API.startsWith('PASTE')) { localStorage.setItem('species', JSON.stringify([])); return true; }
         const r = await fetch(CONFIG.API);
         const d = await r.json();
         localStorage.setItem('species', JSON.stringify(d));
@@ -3375,6 +3360,8 @@ function askNoEmail() {
     $('ema').onclick = () => done(false);
   });
 }
+    $('loginForm').addEventListener('submit', e => e.preventDefault());
+
     $('go').onclick = async () => {
       const g = {
         name: $('name').value.trim(),
