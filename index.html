@@ -1406,6 +1406,31 @@
 @keyframes msgfade{0%{opacity:0}15%,80%{opacity:1}100%{opacity:0}}
 
 </style>
+
+<style>
+:root{--info-color:#1F4D3A} /* change this ONE colour to your Start safari button colour */
+
+.login-card-host{position:relative} /* add this class to your LOGIN CARD container */
+.info-btn{position:absolute;top:12px;right:12px;z-index:5;width:38px;height:38px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font:italic 700 20px/1 Georgia,serif;background:var(--info-color);box-shadow:none;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.info-btn:active{transform:scale(.94)}
+
+.info-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px}
+.info-ov.open{display:flex}
+.info-card{position:relative;width:100%;max-width:380px;background:#FDFCF7;border-radius:30px;padding:34px 22px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+
+.info-x{position:absolute;top:18px;right:18px;width:46px;height:46px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font-size:26px;line-height:1;background:var(--info-color);background:linear-gradient(135deg,color-mix(in srgb,var(--info-color) 78%,#fff),var(--info-color));box-shadow:0 6px 14px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.info-x:active{transform:scale(.94)}
+
+.info-icon{width:92px;height:92px;margin:16px auto;border-radius:50%;background:#E6F4EC;background:color-mix(in srgb,var(--info-color) 12%,#fff);display:flex;align-items:center;justify-content:center;font-size:46px;line-height:1}
+.info-title{margin:0 0 10px;font-size:24px;font-weight:700;color:#1B1B18}
+.info-text{margin:0 0 22px;font-size:15px;line-height:1.6;color:#6B6A63}
+.info-close{width:100%;height:56px;border:0;border-radius:18px;cursor:pointer;color:#fff;font-size:17px;font-weight:700;background:var(--info-color);background:linear-gradient(135deg,color-mix(in srgb,var(--info-color) 78%,#fff),var(--info-color));box-shadow:0 10px 22px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.info-close:active{transform:scale(.96)}
+
+.info-btn:focus-visible,.info-x:focus-visible,.info-close:focus-visible{outline:3px solid #9FE1CB;outline-offset:2px}
+@media (prefers-reduced-motion:reduce){.info-btn,.info-x,.info-close{transition:none}}
+</style>
+
 </head>
 <body>
 
@@ -1482,6 +1507,11 @@
     </div>
 
     <main id="login" class="card">
+
+ <button type="button" class="info-btn" id="infoBtn" aria-label="About this page"
+        data-title="How this works"
+        data-text="Log in once while you have signal. In the park the checklist works offline, so tick every animal, bird or reptile you spot. At the end, submit to get your PDF and an email copy.">i</button>
+
       <h2>Welcome, Explorer</h2>
       <p class="sub">Provide your details to initiate your digital field checklist.</p>
 
@@ -3392,6 +3422,16 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
   });
 </script>
 
+<div class="info-ov" id="infoOv" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
+  <div class="info-card">
+    <button type="button" class="info-x" id="infoX" aria-label="Close"><svg width="26" height="23" viewBox="120 45 420 375" aria-hidden="true"><path fill="#fff" d="M130,148 C128,138 150,128 175,130 C215,133 245,160 295,207 C350,150 450,85 515,55 C530,50 538,60 528,72 C490,110 400,180 340,262 C380,310 410,350 432,385 C440,398 430,405 410,402 C390,400 380,398 372,392 C340,360 320,335 298,310 C270,345 230,385 222,402 C210,412 175,412 158,408 C148,402 152,390 160,378 C185,330 220,285 250,250 C215,220 175,190 135,160 C131,156 130,152 130,148 Z"/></svg></button>
+    <div class="info-icon" aria-hidden="true">&#x1F418;</div>
+    <h2 class="info-title" id="infoTitle"></h2>
+    <p class="info-text" id="infoText"></p>
+    <button type="button" class="info-close" id="infoClose">Got it</button>
+  </div>
+</div>
+
 <script>
 (function(){
   var pp=document.getElementById("pdfProgress"), dn=document.getElementById("done");
@@ -3409,5 +3449,27 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
   });
 })();
 </script>
+
+<script>
+(function () {
+  var btn = document.getElementById('infoBtn');
+  var ov = document.getElementById('infoOv');
+  function openInfo() {
+    document.getElementById('infoTitle').textContent = btn.getAttribute('data-title');
+    document.getElementById('infoText').textContent = btn.getAttribute('data-text');
+    ov.classList.add('open');
+    document.getElementById('infoClose').focus();
+  }
+  function closeInfo() { ov.classList.remove('open'); btn.focus(); }
+  btn.addEventListener('click', openInfo);
+  document.getElementById('infoX').addEventListener('click', closeInfo);
+  document.getElementById('infoClose').addEventListener('click', closeInfo);
+  ov.addEventListener('click', function (e) { if (e.target === ov) closeInfo(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && ov.classList.contains('open')) closeInfo();
+  });
+})();
+</script>
+
 </body>
 </html>
