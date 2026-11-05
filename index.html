@@ -1411,14 +1411,14 @@
 :root{--info-color:#1F4D3A} /* change this ONE colour to your Start safari button colour */
 
 .login-card-host{position:relative} /* add this class to your LOGIN CARD container */
-.info-btn{position:absolute;top:12px;right:12px;z-index:5;width:38px;height:38px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font:italic 700 20px/1 Georgia,serif;background:var(--info-color);box-shadow:none;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.info-btn{position:absolute;top:11px;right:11px;z-index:5;width:30px;height:30px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font:italic 700 16px/1 Georgia,serif;background:var(--info-color);box-shadow:none;display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
 .info-btn:active{transform:scale(.94)}
 
 .info-ov{position:fixed;inset:0;z-index:1000;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;padding:20px}
 .info-ov.open{display:flex}
 .info-card{position:relative;width:100%;max-width:380px;background:#FDFCF7;border-radius:30px;padding:34px 22px 22px;text-align:center;box-shadow:0 20px 50px rgba(0,0,0,.35);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
 
-.info-x{position:absolute;top:18px;right:18px;width:46px;height:46px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font-size:26px;line-height:1;background:var(--info-color);background:linear-gradient(135deg,color-mix(in srgb,var(--info-color) 78%,#fff),var(--info-color));box-shadow:0 6px 14px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
+.info-x{position:absolute;top:16px;right:16px;width:40px;height:40px;border:0;border-radius:50%;padding:0;cursor:pointer;color:#fff;font-size:26px;line-height:1;background:var(--info-color);background:linear-gradient(135deg,color-mix(in srgb,var(--info-color) 78%,#fff),var(--info-color));box-shadow:0 6px 14px rgba(0,0,0,.2);display:flex;align-items:center;justify-content:center;-webkit-tap-highlight-color:transparent;transition:transform .1s}
 .info-x:active{transform:scale(.94)}
 
 .info-icon{width:92px;height:92px;margin:16px auto;border-radius:50%;background:#E6F4EC;background:color-mix(in srgb,var(--info-color) 12%,#fff);display:flex;align-items:center;justify-content:center;font-size:46px;line-height:1}
@@ -3424,7 +3424,7 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
 
 <div class="info-ov" id="infoOv" role="dialog" aria-modal="true" aria-labelledby="infoTitle">
   <div class="info-card">
-    <button type="button" class="info-x" id="infoX" aria-label="Close"><svg width="26" height="23" viewBox="120 45 420 375" aria-hidden="true"><path fill="#fff" d="M130,148 C128,138 150,128 175,130 C215,133 245,160 295,207 C350,150 450,85 515,55 C530,50 538,60 528,72 C490,110 400,180 340,262 C380,310 410,350 432,385 C440,398 430,405 410,402 C390,400 380,398 372,392 C340,360 320,335 298,310 C270,345 230,385 222,402 C210,412 175,412 158,408 C148,402 152,390 160,378 C185,330 220,285 250,250 C215,220 175,190 135,160 C131,156 130,152 130,148 Z"/></svg></button>
+    <button type="button" class="info-x" id="infoX" aria-label="Close"><svg width="22" height="20" viewBox="0 0 47.5 43.2" aria-hidden="true"><path fill="#fff" d="M45.2,0.0 L44.0,0.1 L42.7,0.5 L41.5,1.1 L40.3,1.9 L39.1,2.8 L38.0,3.7 L36.8,4.6 L35.7,5.5 L34.5,6.3 L33.4,7.2 L32.2,8.2 L31.1,9.1 L30.0,10.1 L28.8,11.0 L27.7,12.0 L26.6,12.9 L25.4,13.7 L24.3,14.4 L23.1,14.8 L21.9,14.7 L20.8,14.2 L19.7,13.3 L18.6,12.3 L17.5,11.3 L16.4,10.2 L15.3,9.2 L14.2,8.1 L13.1,7.1 L12.0,6.2 L10.8,5.4 L9.6,4.7 L8.3,4.3 L7.1,4.3 L6.0,4.7 L5.1,5.5 L4.4,6.6 L4.0,7.8 L3.9,9.0 L4.1,10.1 L4.8,11.0 L5.7,11.9 L6.8,12.8 L7.8,13.7 L8.8,14.8 L9.8,15.9 L10.7,17.0 L11.6,18.2 L12.5,19.3 L13.2,20.4 L13.6,21.6 L13.6,22.7 L13.0,23.8 L12.2,24.8 L11.1,25.8 L10.0,26.7 L8.9,27.7 L7.7,28.6 L6.6,29.6 L5.5,30.6 L4.4,31.6 L3.4,32.7 L2.4,33.8 L1.4,34.9 L0.7,36.1 L0.2,37.4 L0.0,38.7 L0.2,40.0 L0.7,41.1 L1.5,42.0 L2.6,42.7 L3.9,43.1 L5.3,43.2 L6.6,43.1 L7.9,42.7 L9.2,42.0 L10.3,41.2 L11.3,40.2 L12.3,39.1 L13.2,37.9 L14.2,36.8 L15.1,35.7 L16.1,34.6 L17.1,33.5 L18.1,32.4 L19.2,31.4 L20.2,30.6 L21.4,30.3 L22.5,30.4 L23.6,31.0 L24.7,31.9 L25.8,32.8 L26.9,33.9 L28.0,34.9 L29.1,35.9 L30.2,36.9 L31.3,37.8 L32.5,38.7 L33.8,39.3 L35.0,39.8 L36.4,39.9 L37.7,39.7 L38.8,39.2 L39.6,38.4 L40.0,37.4 L40.0,36.2 L39.6,35.0 L38.8,33.8 L37.9,32.7 L36.9,31.6 L35.9,30.5 L34.8,29.4 L33.8,28.3 L32.8,27.2 L31.8,26.1 L30.8,25.0 L30.1,23.9 L29.6,22.8 L29.7,21.7 L30.2,20.6 L31.1,19.6 L32.1,18.6 L33.2,17.6 L34.3,16.6 L35.4,15.6 L36.5,14.6 L37.6,13.6 L38.7,12.7 L39.9,11.7 L41.0,10.7 L42.1,9.8 L43.2,8.8 L44.3,7.8 L45.4,6.8 L46.3,5.7 L47.0,4.6 L47.5,3.3 L47.5,2.2 L47.1,1.1 L46.3,0.3Z"/></svg></button>
     <div class="info-icon" aria-hidden="true">&#x1F418;</div>
     <h2 class="info-title" id="infoTitle"></h2>
     <p class="info-text" id="infoText"></p>
