@@ -1,8 +1,7 @@
 /* Safari Sightings: keeps the page, the PDF tool and the fonts on the phone so the site reopens without signal.
    It never touches the Google script, the Cloudinary photos or the page's own photo cache ("img"). */
 
-const CACHE = 'safari-v15';   /* change to safari-v7 only if you add or remove files in the list below */
-const JSPDF = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js';
+const CACHE = 'safari-v16';   /* change to safari-v7 only if you add or remove files in the list below */
 const FONTS = 'https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Montserrat:wght@500;600;700&display=swap';
 
 self.addEventListener('install', e => {
@@ -11,7 +10,7 @@ self.addEventListener('install', e => {
     await Promise.allSettled([
       c.add('./index.html'),
       c.add('./pdf-progress.js'),
-      c.add(JSPDF),
+      c.add('./jspdf.umd.min.js'),
       (async () => {
         const css = await fetch(FONTS);
         await c.put(FONTS, css.clone());
