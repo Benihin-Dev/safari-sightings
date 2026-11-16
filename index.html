@@ -3406,6 +3406,12 @@ if (!g.email && !(await askNoEmail())) { $('email').focus(); return; }
   window.addEventListener("load", function () {
     setTimeout(function () {
       document.getElementById("preloader").classList.add("hide");
+
+      /* Open the "How this works" popup once the preloader has faded out */
+      setTimeout(function () {
+        var btn = document.getElementById("infoBtn");
+        if (btn) btn.click();
+      }, 750);
     }, 1500);
   });
 </script>
