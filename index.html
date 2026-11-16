@@ -1429,7 +1429,8 @@ a.ty-logo:active{transform:scale(.95)}
 .info-close{width:100%;height:56px;border:0;border-radius:18px;cursor:pointer;color:#fff;font-size:17px;font-weight:700;background:var(--info-color);background:linear-gradient(135deg,color-mix(in srgb,var(--info-color) 78%,#fff),var(--info-color));box-shadow:0 10px 22px rgba(0,0,0,.2);-webkit-tap-highlight-color:transparent;transition:transform .1s}
 .info-close:active{transform:scale(.96)}
 
-.info-btn:focus-visible,.info-x:focus-visible,.info-close:focus-visible{outline:3px solid #9FE1CB;outline-offset:2px}
+.info-btn:focus-visible,.info-x:focus-visible,.info-close:focus-visible,
+.info-btn:focus,.info-x:focus,.info-close:focus{outline:none}
 @media (prefers-reduced-motion:reduce){.info-btn,.info-x,.info-close{transition:none}}
 
 .field-wrap{display:flex;align-items:center;gap:12px;padding:0 16px;background:#F4F6F4;border:1.5px solid #E1E5E2;border-radius:12px;transition:all .2s ease}
